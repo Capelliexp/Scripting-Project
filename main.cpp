@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <string>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,115 +19,6 @@
 #include "globals.h"
 
 #define STR_SIZE 128
-
-int CreateIrrBase(){
-    irrDevice = irr::createDevice( irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(800, 600),
-            16, false, false, false, 0);
-
-    driver = irrDevice->getVideoDriver();
-    smgr = irrDevice->getSceneManager();
-    irrGUIEnv = irrDevice->getGUIEnvironment();
-
-    irrDevice->setWindowCaption(L"Project");
-
-    //-----
-
-    light.resize(light.size()+4);
-    light[0] = smgr->addLightSceneNode( 0, irr::core::vector3df(100.0f,-20.0f,30.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
-    light[1] = smgr->addLightSceneNode( 0, irr::core::vector3df(-100.0f,-20.0f,30.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
-    light[2] = smgr->addLightSceneNode( 0, irr::core::vector3df(0.0f,100.0f,0.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
-    light[3] = smgr->addLightSceneNode( 0, irr::core::vector3df(50.0f,20.0f,-50.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
-
-    camera = smgr->addCameraSceneNodeFPS(0, 1.0f, 0.5f, -1, 0, 0, false, 0.f, false, true); //parent, rotSpeed, moveSpeed,...
-    camera->setPosition(irr::core::vector3df(60,60,10));
-    camera->setTarget(irr::core::vector3df(0,0,0));
-
-    return 1;
-}
-
-int ReadLuaScript(lua_State* L, int argc, char** argv){
-    if(argc > 1){   //main-parameter
-        if(luaL_dofile(L, argv[1])){
-            printf("error executing lua file");
-            return 0;
-        }
-        else{
-            printf("lua file executed");
-            return 1;
-        }
-    }
-    return 1;
-}
-
-int CreateLuaFunctions(lua_State* L){
-    lua_pushcfunction(L, AddMesh);
-    lua_setglobal(L, "AddMesh");
-
-    lua_pushcfunction(L, AddBox);
-    lua_setglobal(L, "AddBox");
-
-    lua_pushcfunction(L, GetNodes);
-    lua_setglobal(L, "GetNodes");
-
-    lua_pushcfunction(L, Camera);
-    lua_setglobal(L, "Camera");
-
-    lua_pushcfunction(L, Snapshot);
-    lua_setglobal(L, "Snapshot");
-
-    return 1;
-}
-
-int CreateForms(){
-    {   //1
-        name.push_back("Box1");  //name
-        meshnode.resize(meshnode.size()+1); //increase vector size
-        meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
-            5,0,1,irr::core::vector3df(0,0,0), irr::core::vector3df(0,0,0),irr::core::vector3df(5,5,5));    //add object
-        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
-        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
-    }
-    {   //2
-        name.push_back("Ball1");  //name
-        meshnode.resize(meshnode.size()+1); //increase vector size
-        meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
-            5.0f,16,0,1,irr::core::vector3df(0,30,0), irr::core::vector3df(0,0,0),irr::core::vector3df(2,2,2));    //add object
-        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("mars.jpg"));  //add texture to object
-        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
-    }
-    return 1;
-}
-
-//-----
-
-int NewTriangle(int point1[3], int point2[3], int point3[3], std::string name = ""){
-    if(name == ""){
-        numberString = to_string(/*...*/);
-        name = "Triangle" + numberString;
-    }
-
-    video::S3DVertex Vertices[3];
-    Vertices[0] = video::S3DVertex(point1[0],point1[1],point1[2], 1,1,0, video::SColor(255,0  ,0  ,255), 1, 0);
-    Vertices[1] = video::S3DVertex(point2[0],point2[1],point2[2], 1,0,0, video::SColor(0  ,255,0  ,255), 0, 1);
-    Vertices[2] = video::S3DVertex(point3[0],point3[1],point3[2], 0,1,1, video::SColor(0  ,0  ,255,255), 1, 1);
-
-}
-
-int NewBox(float size, int pos[3], int scale[3], std::string name = ""){
-    if(name == ""){
-        numberString = to_string(meshnode.size());
-        name = "Box" + numberString;
-    }
-
-    name.push_back(name);  //name
-    meshnode.resize(meshnode.size()+1); //increase vector size
-    meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
-        size,0,1,irr::core::vector3df(pos), irr::core::vector3df(0,0,0),irr::core::vector3df(scale));    //add object
-    meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
-    meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
-}
-
-//-----
 
 int main(int argc, char** argv){
     lua_State* L;
@@ -194,4 +86,121 @@ int main(int argc, char** argv){
 
     irrDevice->drop();
     return 0;
+}
+
+int CreateIrrBase(){
+    irrDevice = irr::createDevice( irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(800, 600),
+            16, false, false, false, 0);    //EDT_OPENGL / EDT_BURNINGSVIDEO
+
+    driver = irrDevice->getVideoDriver();
+    smgr = irrDevice->getSceneManager();
+    irrGUIEnv = irrDevice->getGUIEnvironment();
+
+    irrDevice->setWindowCaption(L"Project");
+
+    //-----
+
+    NewLight(100.0f,-20.0f,30.0f);
+    NewLight(-100.0f,-20.0f,30.0f);
+    NewLight(0.0f,100.0f,0.0f);
+    NewLight(50.0f,20.0f,-50.0f);
+
+    //-----
+
+    camera = smgr->addCameraSceneNodeFPS(0, 1.0f, 0.5f, -1, 0, 0, false, 0.f, false, true); //parent, rotSpeed, moveSpeed,...
+    camera->setPosition(irr::core::vector3df(60,60,10));
+    camera->setTarget(irr::core::vector3df(0,0,0));
+
+    return 1;
+}
+
+int ReadLuaScript(lua_State* L, int argc, char** argv){
+    if(argc > 1){   //main-parameter
+        if(luaL_dofile(L, argv[1])){
+            printf("error executing lua file");
+            return 0;
+        }
+        else{
+            printf("lua file executed");
+            return 1;
+        }
+    }
+    return 1;
+}
+
+int CreateLuaFunctions(lua_State* L){
+    lua_pushcfunction(L, AddMesh);
+    lua_setglobal(L, "AddMesh");
+
+    lua_pushcfunction(L, AddBox);
+    lua_setglobal(L, "AddBox");
+
+    lua_pushcfunction(L, GetNodes);
+    lua_setglobal(L, "GetNodes");
+
+    lua_pushcfunction(L, Camera);
+    lua_setglobal(L, "Camera");
+
+    lua_pushcfunction(L, Snapshot);
+    lua_setglobal(L, "Snapshot");
+
+    return 1;
+}
+
+int CreateForms(){
+    {   //1
+        name.push_back("Box1");  //name
+        meshnode.resize(meshnode.size()+1); //increase vector size
+        meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
+            5,0,1,irr::core::vector3df(0,0,0), irr::core::vector3df(0,0,0),irr::core::vector3df(5,5,5));    //add object
+        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
+        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
+    }
+    {   //2
+        name.push_back("Ball1");  //name
+        meshnode.resize(meshnode.size()+1); //increase vector size
+        meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
+            5.0f,16,0,1,irr::core::vector3df(0,30,0), irr::core::vector3df(0,0,0),irr::core::vector3df(2,2,2));    //add object
+        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("mars.jpg"));  //add texture to object
+        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
+    }
+    return 1;
+}
+
+//-----
+
+int NewLight(float x, float y, float z){
+    light.resize(light.size()+1);
+    light[light.size()-1] = smgr->addLightSceneNode( 0, irr::core::vector3df(x,y,z), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
+    return 1;
+}
+
+int NewTriangle(int point1[3], int point2[3], int point3[3], std::string name = ""){
+    /*
+    if(name == ""){
+        numberString = std::to_string(...);
+        name = "Triangle" + numberString;
+    }
+
+    video::S3DVertex Vertices[3];
+    Vertices[0] = video::S3DVertex(point1[0],point1[1],point1[2], 1,1,0, video::SColor(255,0  ,0  ,255), 1, 0);
+    Vertices[1] = video::S3DVertex(point2[0],point2[1],point2[2], 1,0,0, video::SColor(0  ,255,0  ,255), 0, 1);
+    Vertices[2] = video::S3DVertex(point3[0],point3[1],point3[2], 0,1,1, video::SColor(0  ,0  ,255,255), 1, 1);
+    */
+}
+
+int NewBox(float size, int pos[3], int scale[3], std::string objectName = ""){
+    /*
+    if(objectName == ""){
+        objectName = "Box" + std::to_string(meshnode.size());
+    }
+
+    name.push_back(objectName);  //name
+    meshnode.resize(meshnode.size()+1); //increase vector size
+    meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
+        size,0,1,irr::core::vector3df(pos), irr::core::vector3df(0,0,0),irr::core::vector3df(scale));    //add object
+    meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
+    meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
+    */
+    return 1;
 }

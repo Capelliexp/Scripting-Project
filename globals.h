@@ -1,6 +1,15 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+//Functions
+int CreateIrrBase();
+int ReadLuaScript(lua_State* L, int argc, char** argv);
+int CreateLuaFunctions(lua_State* L);
+int CreateForms();
+int NewLight(float x, float y, float z);
+int NewTriangle(int point1[3], int point2[3], int point3[3], std::string name);
+int NewBox(float size, int pos[3], int scale[3], std::string name);
+
 //Irrlicht Handlers
 irr::IrrlichtDevice *irrDevice;
 irr::video::IVideoDriver* driver;
