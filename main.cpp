@@ -79,7 +79,7 @@ int CreateLuaFunctions(lua_State* L){
 
 int CreateForms(){
     {   //1
-        name.push_back("box");  //name
+        name.push_back("Box1");  //name
         meshnode.resize(meshnode.size()+1); //increase vector size
         meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
             5,0,1,irr::core::vector3df(0,0,0), irr::core::vector3df(0,0,0),irr::core::vector3df(5,5,5));    //add object
@@ -87,7 +87,7 @@ int CreateForms(){
         meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
     }
     {   //2
-        name.push_back("ball");  //name
+        name.push_back("Ball1");  //name
         meshnode.resize(meshnode.size()+1); //increase vector size
         meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
             5.0f,16,0,1,irr::core::vector3df(0,30,0), irr::core::vector3df(0,0,0),irr::core::vector3df(2,2,2));    //add object
@@ -96,6 +96,37 @@ int CreateForms(){
     }
     return 1;
 }
+
+//-----
+
+int NewTriangle(int point1[3], int point2[3], int point3[3], std::string name = ""){
+    if(name == ""){
+        numberString = to_string(/*...*/);
+        name = "Triangle" + numberString;
+    }
+
+    video::S3DVertex Vertices[3];
+    Vertices[0] = video::S3DVertex(point1[0],point1[1],point1[2], 1,1,0, video::SColor(255,0  ,0  ,255), 1, 0);
+    Vertices[1] = video::S3DVertex(point2[0],point2[1],point2[2], 1,0,0, video::SColor(0  ,255,0  ,255), 0, 1);
+    Vertices[2] = video::S3DVertex(point3[0],point3[1],point3[2], 0,1,1, video::SColor(0  ,0  ,255,255), 1, 1);
+
+}
+
+int NewBox(float size, int pos[3], int scale[3], std::string name = ""){
+    if(name == ""){
+        numberString = to_string(meshnode.size());
+        name = "Box" + numberString;
+    }
+
+    name.push_back(name);  //name
+    meshnode.resize(meshnode.size()+1); //increase vector size
+    meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
+        size,0,1,irr::core::vector3df(pos), irr::core::vector3df(0,0,0),irr::core::vector3df(scale));    //add object
+    meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
+    meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
+}
+
+//-----
 
 int main(int argc, char** argv){
     lua_State* L;
