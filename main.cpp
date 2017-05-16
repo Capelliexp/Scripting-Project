@@ -31,9 +31,11 @@ int CreateIrrBase(){
 
     //-----
 
-    light.resize(light.size()+2);
-    light[0] = smgr->addLightSceneNode( 0, irr::core::vector3df(-50.0f,10.0f,0.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
-    light[1] = smgr->addLightSceneNode( 0, irr::core::vector3df(50.0f,30.0f,0.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
+    light.resize(light.size()+4);
+    light[0] = smgr->addLightSceneNode( 0, irr::core::vector3df(100.0f,-20.0f,30.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
+    light[1] = smgr->addLightSceneNode( 0, irr::core::vector3df(-100.0f,-20.0f,30.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
+    light[2] = smgr->addLightSceneNode( 0, irr::core::vector3df(0.0f,100.0f,0.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
+    light[3] = smgr->addLightSceneNode( 0, irr::core::vector3df(50.0f,20.0f,-50.0f), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
 
     camera = smgr->addCameraSceneNodeFPS(0, 1.0f, 0.5f, -1, 0, 0, false, 0.f, false, true); //parent, rotSpeed, moveSpeed,...
     camera->setPosition(irr::core::vector3df(60,60,10));
@@ -77,11 +79,20 @@ int CreateLuaFunctions(lua_State* L){
 
 int CreateForms(){
     {   //1
-        name.push_back("box");
-        meshnode.resize(meshnode.size()+1);
+        name.push_back("box");  //name
+        meshnode.resize(meshnode.size()+1); //increase vector size
         meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
-            5,0,1,irr::core::vector3df(0,0,0), irr::core::vector3df(0,0,0),irr::core::vector3df(5,5,5));
-        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));
+            5,0,1,irr::core::vector3df(0,0,0), irr::core::vector3df(0,0,0),irr::core::vector3df(5,5,5));    //add object
+        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
+        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
+    }
+    {   //2
+        name.push_back("ball");  //name
+        meshnode.resize(meshnode.size()+1); //increase vector size
+        meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
+            5.0f,16,0,1,irr::core::vector3df(0,30,0), irr::core::vector3df(0,0,0),irr::core::vector3df(2,2,2));    //add object
+        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("mars.jpg"));  //add texture to object
+        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
     }
     return 1;
 }
@@ -129,7 +140,7 @@ int main(int argc, char** argv){
             fflush(stdout);
             memset(&str[0], 0, sizeof(str));
             read(0, str, STR_SIZE);
-            printf("L: ");
+            //printf("L: ");
 
             if(luaL_dostring(L, str)){
                 printf("input error");

@@ -11,8 +11,6 @@ irr::gui::IGUIEnvironment* irrGUIEnv;
 irr::scene::ICameraSceneNode* camera;
 std::vector<irr::scene::ILightSceneNode*> light;
 
-//Variables
-
 //Objects
 std::vector<std::string> name;
 std::vector<irr::scene::IMeshSceneNode*> meshnode;
