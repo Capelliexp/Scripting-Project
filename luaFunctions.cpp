@@ -15,8 +15,8 @@ static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3
     lua_rawgeti(L, 1, 3);
     point1[2] = lua_tonumber(L, 5);
 
-    std::cout << "AddMesh() coords:" << std::endl;
-    std::cout << " " << point1[0] << " " << point1[1] << " " << point1[2] /*<< ", " << x2 << " " << y2 << " " << z2 << ", " << x3 << " " << y3 << " " << z3*/ << std::endl;
+    std::cout << "AddMesh() coords: "/* << std::endl*/;
+    std::cout << point1[0] << " " << point1[1] << " " << point1[2] /*<< ", " << x2 << " " << y2 << " " << z2 << ", " << x3 << " " << y3 << " " << z3*/ << std::endl;
 
     return 0;
 }
@@ -38,7 +38,7 @@ static int AddBox(lua_State *L){   //AddBox({xPos,yPos,zPos}, size, name)
 
     //something something name
 
-    std::cout << "AddBox() coords:" << std::endl;
+    std::cout << "AddBox() coords: "/* << std::endl*/;
     std::cout << point[0] << " " << point[1] << " " << point[2] << std::endl;
 
     return 0;

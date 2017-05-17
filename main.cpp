@@ -27,8 +27,6 @@ int main(int argc, char** argv){
 
     std::cout << "CreateIrrBase() " << (CreateIrrBase() ? "successful" : "FAILED") << std::endl;
 
-    std::cout << "ReadLuaScript() " << (ReadLuaScript(L, argc, argv) ? "successful" : "FAILED") << std::endl;
-
     std::cout << "CreateForms() " << (CreateForms() ? "successful" : "FAILED") << std::endl;
 
     //------------------------
@@ -44,6 +42,8 @@ int main(int argc, char** argv){
     //------------------------
 
     std::cout << "CreateLuaFunctions() " << (CreateLuaFunctions(L) ? "successful" : "FAILED") << std::endl;
+
+    std::cout << "ReadLuaScript() " << (ReadLuaScript(L, argc, argv) ? "successful" : "FAILED") << std::endl;
 
     //------------------------
 
@@ -88,6 +88,8 @@ int main(int argc, char** argv){
     return 0;
 }
 
+//----- startup
+
 int CreateIrrBase(){
     irrDevice = irr::createDevice( irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(800, 600),
             16, false, false, false, 0);    //EDT_OPENGL / EDT_BURNINGSVIDEO
@@ -114,16 +116,22 @@ int CreateIrrBase(){
     return 1;
 }
 
-int ReadLuaScript(lua_State* L, int argc, char** argv){
-    if(argc > 1){   //main-parameter
-        if(luaL_dofile(L, argv[1])){
-            printf("error executing lua file");
-            return 0;
-        }
-        else{
-            printf("lua file executed");
-            return 1;
-        }
+int CreateForms(){
+    {   //1
+        name.push_back("Box1");  //name
+        meshnode.resize(meshnode.size()+1); //increase vector size
+        meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
+            5,0,1,irr::core::vector3df(0,0,0), irr::core::vector3df(0,0,0),irr::core::vector3df(5,5,5));    //add object
+        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("tex/red.png"));  //add texture to object
+        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
+    }
+    {   //2
+        name.push_back("Ball1");  //name
+        meshnode.resize(meshnode.size()+1); //increase vector size
+        meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
+            5.0f,16,0,1,irr::core::vector3df(0,30,0), irr::core::vector3df(0,0,0),irr::core::vector3df(2,2,2));    //add object
+        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("tex/mars.jpg"));  //add texture to object
+        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
     }
     return 1;
 }
@@ -147,27 +155,22 @@ int CreateLuaFunctions(lua_State* L){
     return 1;
 }
 
-int CreateForms(){
-    {   //1
-        name.push_back("Box1");  //name
-        meshnode.resize(meshnode.size()+1); //increase vector size
-        meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
-            5,0,1,irr::core::vector3df(0,0,0), irr::core::vector3df(0,0,0),irr::core::vector3df(5,5,5));    //add object
-        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
-        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
-    }
-    {   //2
-        name.push_back("Ball1");  //name
-        meshnode.resize(meshnode.size()+1); //increase vector size
-        meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
-            5.0f,16,0,1,irr::core::vector3df(0,30,0), irr::core::vector3df(0,0,0),irr::core::vector3df(2,2,2));    //add object
-        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("mars.jpg"));  //add texture to object
-        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
+int ReadLuaScript(lua_State* L, int argc, char** argv){
+    std::cout << "Lua startup script detected" << std::endl;
+    if(argc > 1){   //main-parameter
+        if(luaL_dofile(L, argv[1])){
+            printf("error executing lua file \n");
+            return 0;
+        }
+        else{
+            printf("lua file executed \n");
+            return 1;
+        }
     }
     return 1;
 }
 
-//-----
+//----- runtime
 
 int NewLight(float x, float y, float z){
     light.resize(light.size()+1);
@@ -202,5 +205,10 @@ int NewBox(float size, int pos[3], int scale[3], std::string objectName = ""){
     meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
     meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
     */
+    return 1;
+}
+
+int NewTexture(std::string texFile, std::string bindTargetName){
+
     return 1;
 }
