@@ -1,11 +1,11 @@
 CC=g++
-CFLAGS=-I lua/src -I irrlicht/include/ irrlicht/lib/Linux/libIrrlicht.a -L/usr/lib/x86_64-linux-gnu/mesa -lGL -lX11 -lXxf86vm -otask3 -L lua/src -llua -std=c++11
+CFLAGS=-I project/lua/src -I project/irrlicht/include/ project/irrlicht/lib/Linux/libIrrlicht.a -L/usr/lib/x86_64-linux-gnu/mesa -lGL -lX11 -lXxf86vm -otask3 -L project/lua/src -llua -std=c++11
 
-Project: main.cpp luaFunctions.cpp globals.h lua/src/liblua.a irrlicht/lib/Linux/libIrrlicht.a
-	$(CC) main.cpp $(CFLAGS) -o $@ -ldl
+main: project/main.cpp project/luaFunctions.cpp project/globals.h project/lua/src/liblua.a project/irrlicht/lib/Linux/libIrrlicht.a
+	$(CC) project/main.cpp $(CFLAGS) -o $@ -ldl
 
-lua/src/liblua.a:
-	cd lua/src; make linux
+project/lua/src/liblua.a:
+	cd project/lua/src; make linux
 
-irrlicht/lib/Linux/libIrrlicht.a:
-	cd irrlicht/source/Irrlicht/; make linux
+project/irrlicht/lib/Linux/libIrrlicht.a:
+	cd project/irrlicht/source/Irrlicht/; make linux
