@@ -152,6 +152,9 @@ int CreateLuaFunctions(lua_State* L){
     lua_pushcfunction(L, Snapshot);
     lua_setglobal(L, "Snapshot");
 
+    lua_pushcfunction(L, AddTexture);
+    lua_setglobal(L, "AddTexture");
+
     return 1;
 }
 
@@ -178,37 +181,34 @@ int NewLight(float x, float y, float z){
     return 1;
 }
 
-int NewTriangle(int point1[3], int point2[3], int point3[3], std::string name = ""){
-    /*
-    if(name == ""){
-        numberString = std::to_string(...);
-        name = "Triangle" + numberString;
+int NewTriangle(int point1[3], int point2[3], int point3[3], std::string objectName = ""){  //EJ KLAR
+    if(objectName == ""){
+        objectName = "Triangle" + std::to_string(meshnode.size());  //<-- OBS! kanske inte är "meshnode" som ska användas
     }
 
-    video::S3DVertex Vertices[3];
-    Vertices[0] = video::S3DVertex(point1[0],point1[1],point1[2], 1,1,0, video::SColor(255,0  ,0  ,255), 1, 0);
-    Vertices[1] = video::S3DVertex(point2[0],point2[1],point2[2], 1,0,0, video::SColor(0  ,255,0  ,255), 0, 1);
-    Vertices[2] = video::S3DVertex(point3[0],point3[1],point3[2], 0,1,1, video::SColor(0  ,0  ,255,255), 1, 1);
-    */
+    irr::video::S3DVertex Vertices[3];
+    Vertices[0] = irr::video::S3DVertex(point1[0],point1[1],point1[2], 1,1,0, irr::video::SColor(255,0  ,0  ,255), 1, 0);
+    Vertices[1] = irr::video::S3DVertex(point2[0],point2[1],point2[2], 1,0,0, irr::video::SColor(0  ,255,0  ,255), 0, 1);
+    Vertices[2] = irr::video::S3DVertex(point3[0],point3[1],point3[2], 0,1,1, irr::video::SColor(0  ,0  ,255,255), 1, 1);
 }
 
 int NewBox(float size, int pos[3], int scale[3], std::string objectName = ""){
-    /*
     if(objectName == ""){
         objectName = "Box" + std::to_string(meshnode.size());
     }
-
+    
     name.push_back(objectName);  //name
     meshnode.resize(meshnode.size()+1); //increase vector size
     meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
-        size,0,1,irr::core::vector3df(pos), irr::core::vector3df(0,0,0),irr::core::vector3df(scale));    //add object
+        size,0,1,irr::core::vector3df(pos[0], pos[1], pos[2]),irr::core::vector3df(0,0,0),
+        irr::core::vector3df(scale[0], scale[1], scale[2]));    //add object
     meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
     meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
-    */
+    
     return 1;
 }
 
-int NewTexture(std::string texFile, std::string bindTargetName){
+int NewTexture(float** colors, int size, std::string name = ""){    //EJ KLAR
 
     return 1;
 }

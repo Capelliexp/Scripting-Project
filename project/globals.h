@@ -9,7 +9,7 @@ int CreateForms();
 int NewLight(float x, float y, float z);
 int NewTriangle(int point1[3], int point2[3], int point3[3], std::string name);
 int NewBox(float size, int pos[3], int scale[3], std::string name);
-int NewTexture(std::string texFile, std::string bindTarget);
+int NewTexture(float** colors, int size, std::string name);
 
 //Irrlicht Handlers
 irr::IrrlichtDevice *irrDevice;
