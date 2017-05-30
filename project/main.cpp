@@ -5,6 +5,7 @@
 #include <lauxlib.h>
 
 #include <iostream>
+#include <array>
 #include <cstring>
 #include <string>
 #include <stdio.h>
@@ -28,7 +29,7 @@ int main(int argc, char** argv){
 
     std::cout << "CreateIrrBase() " << (CreateIrrBase() ? "successful" : "FAILED") << std::endl;
 
-    std::cout << "CreateForms() " << (CreateForms() ? "successful" : "FAILED") << std::endl;
+    std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
 
     //------------------------
 
@@ -89,7 +90,7 @@ int main(int argc, char** argv){
     return 0;
 }
 
-//----- startup
+//----- startup:
 
 int CreateIrrBase(){
     irrDevice = irr::createDevice( irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(800, 600),
@@ -119,31 +120,19 @@ int CreateIrrBase(){
     return 1;
 }
 
-int CreateForms(){
-    /*{   //1
-        name.push_back("Box1");  //name
-        meshnode.resize(meshnode.size()+1); //increase vector size
-        meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
-            5,0,(idFreed.size() == 0 ? idTop++ : GetUsedID()),irr::core::vector3df(0,0,0),
-            irr::core::vector3df(0,0,0),irr::core::vector3df(5,5,5));    //add object
-        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("project/tex/red.png"));  //add texture to object
-        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
-    }*/
-    /*{   //2
-        name.push_back("Ball1");  //name
-        meshnode.resize(meshnode.size()+1); //increase vector size
-        meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
-            5.0f,16,0,(idFreed.size() == 0 ? idTop++ : GetUsedID()),irr::core::vector3df(0,30,0),
-            irr::core::vector3df(0,0,0),irr::core::vector3df(2,2,2));    //add object
-        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("project/tex/mars.jpg"));  //add texture to object
-        meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
-    }*/
+int CreateBaseForms(){
+    /*int p1[3] = {0,0,0}; int s1[3] = {5,5,5};
+    NewBox(5, p1, s1, "project/tex/red.png", "Box1");
 
-    int a[3] = {0, 0, 0};
-    int b[3] = {2, 1, 1};
-    int c[3] = {0, 1, 3};
+    int p2[3] = {0,30,0}; int s2[3] = {2,2,2};
+    NewBall(5, p2, s2, "project/tex/mars.jpg", "Ball1");
 
-    NewTriangle(a, b, c, "");
+    int a[3] = {0, 0, 0}; int b[3] = {2, 1, 1}; int c[3] = {0, 1, 3};
+    NewTriangle(a, b, c, "", "");
+    */
+
+    CSampleSceneNode *myNode =
+        new CSampleSceneNode(smgr->getRootSceneNode(), smgr, 666);
 
     return 1;
 }
@@ -185,15 +174,15 @@ int ReadLuaScript(lua_State* L, int argc, char** argv){
     return 1;
 }
 
-//----- runtime
+//----- runtime:
 
 int NewLight(float x, float y, float z){
     light.resize(light.size()+1);
-    light[light.size()-1] = smgr->addLightSceneNode( 0, irr::core::vector3df(x,y,z), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 500.0f );
+    light[light.size()-1] = smgr->addLightSceneNode( 0, irr::core::vector3df(x,y,z), irr::video::SColorf(1.0f,1.0f,1.0f,1.0f), 250.0f );
     return 1;
 }
 
-int NewTriangle(int point1[3], int point2[3], int point3[3], std::string objectName){  //EJ KLAR
+int NewTriangle(int point1[3], int point2[3], int point3[3], irr::io::path texPath, std::string objectName){  //EJ KLAR
     if(objectName == ""){
         objectName = "Triangle" + std::to_string(meshnode.size());  //<-- OBS! kanske inte är "meshnode" som ska användas
     }
@@ -208,10 +197,9 @@ int NewTriangle(int point1[3], int point2[3], int point3[3], std::string objectN
     Box.reset(Vertices[0].Pos);
     for (irr::s32 i=1; i<3; ++i)
         Box.addInternalPoint(Vertices[i].Pos);
-
 }
 
-int NewBox(float size, int pos[3], int scale[3], std::string objectName){
+int NewBox(float size, int pos[3], int scale[3], irr::io::path texPath, std::string objectName){
     if(objectName == ""){
         objectName = "Box" + std::to_string(meshnode.size());
     }
@@ -221,13 +209,37 @@ int NewBox(float size, int pos[3], int scale[3], std::string objectName){
     meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
         size,0,(idFreed.size() == 0 ? idTop++ : GetUsedID()),irr::core::vector3df(pos[0], pos[1], pos[2]),irr::core::vector3df(0,0,0),
         irr::core::vector3df(scale[0], scale[1], scale[2]));    //add object
-    meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture("red.png"));  //add texture to object
+
+    if(texPath != ""){
+        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture(texPath));  //add texture to object
+    }
+
     meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
-    
+
     return 1;
 }
 
-int NewTexture(float** colors, int size, std::string name = ""){    //EJ KLAR
+int NewBall(float size, int pos[3], int scale[3], irr::io::path texPath, std::string objectName){
+    if(objectName == ""){
+        objectName = "Ball" + std::to_string(meshnode.size());
+    }
+    
+    name.push_back(objectName);  //name
+    meshnode.resize(meshnode.size()+1); //increase vector size
+    meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
+            size,64,0,(idFreed.size() == 0 ? idTop++ : GetUsedID()),irr::core::vector3df(pos[0],pos[1],pos[2]),
+            irr::core::vector3df(0,0,0),irr::core::vector3df(scale[0],scale[1],scale[2]));    //add object
+
+    if(texPath != ""){
+        meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture(texPath));  //add texture to object
+    }
+
+    meshnode[meshnode.size()-1]->getMaterial(0).BackfaceCulling = false;    //disable backface culling
+
+    return 1;
+}
+
+int NewTexture(float** colors, int size, std::string name){    //EJ KLAR
 
     return 1;
 }

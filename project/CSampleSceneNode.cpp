@@ -3,7 +3,7 @@
 
 #include <irrlicht.h>
 
-using namespace irr;
+using namespace irr;    //ugly, but its 02:00 and im lazy
 
 class CSampleSceneNode : public scene::ISceneNode {
 private:
@@ -16,7 +16,7 @@ public:
     virtual void OnRegisterSceneNode();
     virtual void render();
 	virtual const core::aabbox3d<f32>& getBoundingBox() const;
-    virtual u32 getMaterialCount() const;
+    virtual u32 getMaterialCount();
     virtual video::SMaterial& getMaterial(u32 i);
 };
 
@@ -51,15 +51,15 @@ void CSampleSceneNode::render(){
     driver->drawVertexPrimitiveList(&Vertices[0], 4, &indices[0], 4, video::EVT_STANDARD, scene::EPT_TRIANGLES, video::EIT_16BIT);
 }
 
-core::aabbox3d<irr::f32>& CSampleSceneNode::getBoundingBox() const{
+const core::aabbox3d<f32>& CSampleSceneNode::getBoundingBox() const{
     return Box;
 }
 
-irr::u32 CSampleSceneNode::getMaterialCount() const{
+u32 CSampleSceneNode::getMaterialCount(){
     return 1;
 }
 
-video::SMaterial& CSampleSceneNode::getMaterial(irr::u32 i){
+video::SMaterial& CSampleSceneNode::getMaterial(u32 i){
     return Material;
 }
 

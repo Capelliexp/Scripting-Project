@@ -5,10 +5,11 @@
 int CreateIrrBase();
 int ReadLuaScript(lua_State* L, int argc, char** argv);
 int CreateLuaFunctions(lua_State* L);
-int CreateForms();
+int CreateBaseForms();
 int NewLight(float x, float y, float z);
-int NewTriangle(int point1[3], int point2[3], int point3[3], std::string name);
-int NewBox(float size, int pos[3], int scale[3], std::string name);
+int NewTriangle(int point1[3], int point2[3], int point3[3], irr::io::path texPath, std::string name);
+int NewBox(float size, int pos[3], int scale[3], irr::io::path texPath, std::string objectName);
+int NewBall(float size, int pos[3], int scale[3], irr::io::path texPath, std::string objectName);
 int NewTexture(float** colors, int size, std::string name);
 int GetUsedID();
 
