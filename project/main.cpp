@@ -1,6 +1,7 @@
 #include <irrlicht.h>
 
 #include <lua.hpp>
+#include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
 
@@ -18,7 +19,7 @@
 
 #include "luaFunctions.cpp"
 #include "globals.h"
-#include "CSampleSceneNode.cpp"
+#include "TriangleNode.cpp"
 
 #define STR_SIZE 128
 
@@ -56,7 +57,7 @@ int main(int argc, char** argv){
     fflush(stdout);
 
     while(irrDevice->run()){
-        //Lua
+        //Terminal
         FD_ZERO(&readset);
         FD_SET(0, &readset);
         result = select(0+1, &readset, NULL, NULL, &time);
@@ -65,10 +66,11 @@ int main(int argc, char** argv){
             fflush(stdout);
             memset(&str[0], 0, sizeof(str));
             read(0, str, STR_SIZE);
-            //printf("L: ");
-
+            
+            //Lua
             if(luaL_dostring(L, str)){
-                printf("input error");
+                printf("   INPUT ERROR: ");
+                std::cout << lua_tostring(L, 1) << std::endl;
             }
             memset(&str[0], 0, sizeof(str));
             printf("\n>> ");
@@ -78,7 +80,7 @@ int main(int argc, char** argv){
         //------------------------
 
         //Irrlicht
-		driver->beginScene(true, true, irr::video::SColor(255,100,101,140));
+		driver->beginScene(true, true, irr::video::SColor(255,70,70,110));
 
         smgr->drawAll();
         irrGUIEnv->drawAll();
@@ -121,19 +123,26 @@ int CreateIrrBase(){
 }
 
 int CreateBaseForms(){
-    /*int p1[3] = {0,0,0}; int s1[3] = {5,5,5};
-    NewBox(5, p1, s1, "project/tex/red.png", "Box1");
+    float p1[3] = {0,0,0};
+    NewBox(20, p1, "project/tex/red.png", "BigRedBox");
 
     int p2[3] = {0,30,0}; int s2[3] = {2,2,2};
-    NewBall(5, p2, s2, "project/tex/mars.jpg", "Ball1");
+    NewBall(5, p2, s2, "project/tex/mars.jpg", "Mars");
 
-    int a[3] = {0, 0, 0}; int b[3] = {2, 1, 1}; int c[3] = {0, 1, 3};
-    NewTriangle(a, b, c, "", "");
-    */
+    float a[3] = {20, 20, 20}; float b[3] = {50, 20, 20}; float c[3] = {35, 50, 20};
+    float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5, 1};
+    NewTriangle(a, b, c, uv1, uv2, uv3, "", "");
 
-    CSampleSceneNode *myNode =
-        new CSampleSceneNode(smgr->getRootSceneNode(), smgr, 666);
+    float p3[3] = {0,15,0};
+    NewBox(10, p3, "project/tex/blue.png", "");
 
+    for(int i = 0; i < name.size(); i++){
+        if(name[i] != ""){
+            std::cout << "spot: " << i << ", name: " << name[i] << ", type: " << 
+                (trianglenode[i] != NULL ? "triangle" : (meshnode[i]->getType() == irr::scene::ESNT_CUBE ? "cube" : "sphere"))
+                << std::endl;
+        }
+    }
     return 1;
 }
 
@@ -164,6 +173,7 @@ int ReadLuaScript(lua_State* L, int argc, char** argv){
     if(argc > 1){   //main-parameter
         if(luaL_dofile(L, argv[1])){
             printf("error executing lua file \n");
+            std::cout << lua_tostring(L, 1) << std::endl;
             return 0;
         }
         else{
@@ -182,33 +192,34 @@ int NewLight(float x, float y, float z){
     return 1;
 }
 
-int NewTriangle(int point1[3], int point2[3], int point3[3], irr::io::path texPath, std::string objectName){  //EJ KLAR
+int NewTriangle(float point1[3], float point2[3], float point3[3], float uv1[2], float uv2[2], float uv3[2], irr::io::path texPath, std::string objectName){
     if(objectName == ""){
         objectName = "Triangle" + std::to_string(meshnode.size());  //<-- OBS! kanske inte är "meshnode" som ska användas
     }
 
-    irr::core::aabbox3d<irr::f32> Box;
+    name.push_back(objectName);  //name
+    meshnode.resize(meshnode.size()+1); //increase vector size
+    trianglenode.resize(trianglenode.size()+1); //increase vector size
 
-    irr::video::S3DVertex Vertices[3];
-    Vertices[0] = irr::video::S3DVertex(point1[0],point1[1],point1[2], 1,1,0, irr::video::SColor(255,0  ,0  ,255), 1, 0);
-    Vertices[1] = irr::video::S3DVertex(point2[0],point2[1],point2[2], 1,0,0, irr::video::SColor(0  ,255,0  ,255), 0, 1);
-    Vertices[2] = irr::video::S3DVertex(point3[0],point3[1],point3[2], 0,1,1, irr::video::SColor(0  ,0  ,255,255), 1, 1);
-
-    Box.reset(Vertices[0].Pos);
-    for (irr::s32 i=1; i<3; ++i)
-        Box.addInternalPoint(Vertices[i].Pos);
+    trianglenode[trianglenode.size()-1] = new TriangleNode(point1, point2, point3, uv1, uv2, uv3, smgr->getRootSceneNode(), smgr, 666);
+    
+    if(texPath != ""){  //broken
+        trianglenode[trianglenode.size()-1]->setMaterialTexture(0, driver->getTexture(texPath));  //add texture to object
+    }
 }
 
-int NewBox(float size, int pos[3], int scale[3], irr::io::path texPath, std::string objectName){
+int NewBox(float size, float pos[3], irr::io::path texPath, std::string objectName){
     if(objectName == ""){
         objectName = "Box" + std::to_string(meshnode.size());
     }
     
     name.push_back(objectName);  //name
     meshnode.resize(meshnode.size()+1); //increase vector size
+    trianglenode.resize(trianglenode.size()+1); //increase vector size
+    
     meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
         size,0,(idFreed.size() == 0 ? idTop++ : GetUsedID()),irr::core::vector3df(pos[0], pos[1], pos[2]),irr::core::vector3df(0,0,0),
-        irr::core::vector3df(scale[0], scale[1], scale[2]));    //add object
+        irr::core::vector3df(1, 1, 1));    //add object
 
     if(texPath != ""){
         meshnode[meshnode.size()-1]->setMaterialTexture(0, driver->getTexture(texPath));  //add texture to object
@@ -226,6 +237,8 @@ int NewBall(float size, int pos[3], int scale[3], irr::io::path texPath, std::st
     
     name.push_back(objectName);  //name
     meshnode.resize(meshnode.size()+1); //increase vector size
+    trianglenode.resize(trianglenode.size()+1); //increase vector size
+    
     meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
             size,64,0,(idFreed.size() == 0 ? idTop++ : GetUsedID()),irr::core::vector3df(pos[0],pos[1],pos[2]),
             irr::core::vector3df(0,0,0),irr::core::vector3df(scale[0],scale[1],scale[2]));    //add object
@@ -248,4 +261,17 @@ int GetUsedID(){    //KANSKE KLAR
     int returnValue = idFreed.front();
     idFreed.erase(idFreed.begin());
     return returnValue;
+}
+
+int ScreenShot(std::string fileName){
+    const char * c = fileName.c_str();
+
+    irr::video::IImage* const image = driver->createScreenShot();
+    irr::c8 filename[64];
+
+    snprintf(filename, 64, c);
+
+    driver->writeImageToFile(image, filename);
+ 
+    image->drop();
 }
