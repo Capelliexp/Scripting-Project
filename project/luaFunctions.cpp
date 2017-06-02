@@ -50,10 +50,10 @@ static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3
     if(lua_isnumber(L, 14) == 1 || lua_isnumber(L, 15) == 1 || lua_isnumber(L, 16) == 1)
         return luaL_error(L, "ERROR: number of components");
 
-    std::cout <<
+    /*std::cout <<
         "   point1: (" << point1[0] << "," << point1[1] << "," << point1[2] << ")" << std::endl << 
         "   point2: (" << point2[0] << "," << point2[1] << "," << point2[2] << ")" << std::endl << 
-        "   point3: (" << point3[0] << "," << point3[1] << "," << point3[2] << ")" << std::endl;
+        "   point3: (" << point3[0] << "," << point3[1] << "," << point3[2] << ")" << std::endl;*/
 
     float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5,1};
     NewTriangle(point1, point2, point3, uv1, uv2, uv3, "", "");
@@ -88,9 +88,9 @@ static int AddBox(lua_State *L){   //AddBox({xPos,yPos,zPos}, size, name)
     if(lua_isnumber(L, 7) == 1)
         return luaL_error(L, "ERROR: number of components");
 
-    std::cout << "   AddBox() coords: "/* << std::endl*/;
+    /*std::cout << "   AddBox() coords: ";
     std::cout << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
-    std::cout << "   size: " << size << ", name: " << name << std::endl;
+    std::cout << "   size: " << size << ", name: " << name << std::endl;*/
 
     NewBox(size, coords, "", name);
 
@@ -98,15 +98,28 @@ static int AddBox(lua_State *L){   //AddBox({xPos,yPos,zPos}, size, name)
 }
 
 static int GetNodes(lua_State *L){  //GetNodes()
-    lua_newtable(L);
-    lua_pushinteger(L, meshPos.X);
-    lua_rawseti(L, 1, 1);
-    lua_pushinteger(L, meshPos.Y);
-    lua_rawseti(L, 1, 2);
-    lua_pushinteger(L, meshPos.Z);
-    lua_rawseti(L, 1, 3);
+    //call with: for k,v in pairs(GetNodes()) do print(k,v) end
 
-    return 0;
+    std::string str = "";
+
+    lua_newtable(L);
+
+    for(int i = 0; i < name.size(); i++){
+        
+        if(name[i] != ""){
+
+            str = "ID: " + std::to_string(i) +
+                " | type: " + (trianglenode[i] != NULL ? "triangle" : (meshnode[i]->getType() == irr::scene::ESNT_CUBE ? "cube    " : "sphere  ")) + 
+                " | name: " + name[i];
+
+            const char * c = str.c_str();
+
+            lua_pushstring(L, c);
+            lua_rawseti(L, 1, i+1);
+        }
+    }
+
+    return 1;
 }
 
 static int Camera(lua_State *L){    //Camera({xPos,yPos,zPos}, {xLook,yLook,zLook})
@@ -138,6 +151,11 @@ static int Camera(lua_State *L){    //Camera({xPos,yPos,zPos}, {xLook,yLook,zLoo
     if(lua_isnumber(L, 9) == 1 || lua_isnumber(L, 10) == 1)
         return luaL_error(L, "ERROR: number of components");
 
+    /*std::cout << "   New Pos: ";
+    std::cout << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+    std::cout << "   New Look: ";
+    std::cout << look[0] << " " << look[1] << " " << look[2] << std::endl;*/
+
     camera->setPosition(irr::core::vector3df(pos[0],pos[1],pos[2]));
     camera->setTarget(irr::core::vector3df(look[0],look[1],look[2]));
 
@@ -145,13 +163,9 @@ static int Camera(lua_State *L){    //Camera({xPos,yPos,zPos}, {xLook,yLook,zLoo
 }
 
 static int Snapshot(lua_State *L){  //Snapshot(name)
-    std::cout << "1" << std::endl;
     luaL_checktype(L, 1, LUA_TSTRING);
-    std::cout << "2" << std::endl;
     std::string name = lua_tostring(L, 1);
-    std::cout << "3" << std::endl;
     ScreenShot(name);
-    std::cout << "4" << std::endl;
     return 0;
 }
 

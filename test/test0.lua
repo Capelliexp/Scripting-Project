@@ -22,3 +22,6 @@ AddMesh({{50,50,50}, {50,70,50}, {50,60,80}})
 --AddMesh({{1,2,3}}) -- Error: not a valid number of vertices
 
 Camera({50,50,50}, {0,0,0})
+
+for k,v in pairs(GetNodes()) do print(k,v) end
+--for k,v in pairs(GetNodes()) do for kk,vv in pairs(v) do print(k,kk,vv) end end
