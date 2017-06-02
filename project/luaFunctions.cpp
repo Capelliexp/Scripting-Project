@@ -165,7 +165,8 @@ static int Camera(lua_State *L){    //Camera({xPos,yPos,zPos}, {xLook,yLook,zLoo
 static int Snapshot(lua_State *L){  //Snapshot(name)
     luaL_checktype(L, 1, LUA_TSTRING);
     std::string name = lua_tostring(L, 1);
-    ScreenShot(name);
+    captureScene = name;
+    captureSceneCount = 1;
     return 0;
 }
 

@@ -28,9 +28,11 @@ int main(int argc, char** argv){
     L = luaL_newstate();
     luaL_openlibs(L);
 
+    //------------------------
+
     std::cout << "CreateIrrBase() " << (CreateIrrBase() ? "successful" : "FAILED") << std::endl;
 
-    std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
+    //std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
 
     //------------------------
 
@@ -57,6 +59,11 @@ int main(int argc, char** argv){
     fflush(stdout);
 
     while(irrDevice->run()){
+        if(captureScene != "" && captureSceneCount == 0)
+            ScreenShot(captureScene);
+        else
+            captureSceneCount = 0;
+
         //Terminal
         FD_ZERO(&readset);
         FD_SET(0, &readset);
@@ -117,6 +124,8 @@ int CreateIrrBase(){
     camera->setPosition(irr::core::vector3df(60,60,10));
     camera->setTarget(irr::core::vector3df(0,0,0));
 
+    captureScene = "";
+    captureSceneCount = 0;
     idTop = 0;
 
     return 1;
@@ -136,34 +145,35 @@ int CreateBaseForms(){
     float p3[3] = {0,15,0};
     NewBox(10, p3, "project/tex/blue.png", "");
 
-    for(int i = 0; i < name.size(); i++){
+    /*for(int i = 0; i < name.size(); i++){
         if(name[i] != ""){
             std::cout << "spot: " << i << ", name: " << name[i] << ", type: " << 
                 (trianglenode[i] != NULL ? "triangle" : (meshnode[i]->getType() == irr::scene::ESNT_CUBE ? "cube" : "sphere"))
                 << std::endl;
         }
-    }
+    }*/
+
     return 1;
 }
 
 int CreateLuaFunctions(lua_State* L){
     lua_pushcfunction(L, AddMesh);
-    lua_setglobal(L, "AddMesh");
+    lua_setglobal(L, "addMesh");
 
     lua_pushcfunction(L, AddBox);
-    lua_setglobal(L, "AddBox");
+    lua_setglobal(L, "addBox");
 
     lua_pushcfunction(L, GetNodes);
-    lua_setglobal(L, "GetNodes");
+    lua_setglobal(L, "getNodes");
 
     lua_pushcfunction(L, Camera);
-    lua_setglobal(L, "Camera");
+    lua_setglobal(L, "camera");
 
     lua_pushcfunction(L, Snapshot);
-    lua_setglobal(L, "Snapshot");
+    lua_setglobal(L, "snapshot");
 
     lua_pushcfunction(L, AddTexture);
-    lua_setglobal(L, "AddTexture");
+    lua_setglobal(L, "addTexture");
 
     return 1;
 }
@@ -274,4 +284,5 @@ int ScreenShot(std::string fileName){
     driver->writeImageToFile(image, filename);
  
     image->drop();
+    captureScene = "";
 }

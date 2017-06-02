@@ -9,19 +9,19 @@
 --AddMesh({{1,2,3},{4,5,6},{7,8,9}})
 
 io.write("   AddBox(): \n")
-AddBox({-20,10,30}, 4, "testBox1")
+addBox({-20,10,30}, 4, "testBox1")
 --AddBox({-20,10,30}, 4)
 --AddBox({-20,30}, 4, "testBox1")
 --AddBox({-20,10,30})
 --AddBox({-20,,10,30})
 
 io.write("\n   AddMesh(): \n")
-AddMesh({{50,50,50}, {50,70,50}, {50,60,80}})
+addMesh({{50,50,50}, {50,70,50}, {50,60,80}})
 --AddMesh({"orange"},{},{}) -- Error: non-numeric coordinates
 --AddMesh({{1,2,3,4},{1,1,1},{2,2,2}}) -- Error: number of components
 --AddMesh({{1,2,3}}) -- Error: not a valid number of vertices
 
-Camera({50,50,50}, {0,0,0})
+camera({50,50,50}, {0,0,0})
 
-for k,v in pairs(GetNodes()) do print(k,v) end
---for k,v in pairs(GetNodes()) do for kk,vv in pairs(v) do print(k,kk,vv) end end
+for k,v in pairs(getNodes()) do print(k,v) end
+--for k,v in pairs(getNodes()) do for kk,vv in pairs(v) do print(k,kk,vv) end end

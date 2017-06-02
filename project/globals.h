@@ -34,4 +34,7 @@ std::vector<TriangleNode*> trianglenode;
 int idTop;
 std::vector<int> idFreed;
 
+std::string captureScene;
+int captureSceneCount;
+
 #endif
