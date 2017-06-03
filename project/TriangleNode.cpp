@@ -10,6 +10,7 @@ private:
 	core::aabbox3d<f32> Box;
     video::S3DVertex Vertices[4];
     video::SMaterial Material;
+    int ID;
 
 public:
     TriangleNode(float point1[3], float point2[3], float point3[3], float uv1[2], float uv2[2], float uv3[2], scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id);
@@ -18,6 +19,7 @@ public:
 	virtual const core::aabbox3d<f32>& getBoundingBox() const;
     virtual u32 getMaterialCount();
     virtual video::SMaterial& getMaterial(u32 i);
+    int GetID();
 };
 
 TriangleNode::TriangleNode(float point1[3], float point2[3], float point3[3], float uv1[2], float uv2[2], float uv3[2], scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id) : scene::ISceneNode(parent, mgr, id){
@@ -38,6 +40,8 @@ TriangleNode::TriangleNode(float point1[3], float point2[3], float point3[3], fl
     Box.reset(Vertices[0].Pos);
     for (s32 i=1; i<3; ++i)
         Box.addInternalPoint(Vertices[i].Pos);
+
+    this->ID = id;
 }
 
 void TriangleNode::OnRegisterSceneNode(){
@@ -66,6 +70,10 @@ u32 TriangleNode::getMaterialCount(){
 
 video::SMaterial& TriangleNode::getMaterial(u32 i){
     return Material;
+}
+
+int TriangleNode::GetID(){
+    return this->ID;
 }
 
 #endif

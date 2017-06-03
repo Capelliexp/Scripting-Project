@@ -8,9 +8,11 @@ static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3
 
     luaL_checktype(L, 1, LUA_TTABLE);
 
+    //------------------------
+
     lua_rawgeti(L, 1, 1);   //add table 1 to stack (1x3 värden) (2)
     if(lua_istable(L, 2) != 1)
-        return luaL_error(L, "ERROR: invalid table (point2)");
+        return luaL_error(L, "ERROR: invalid table (point1)");
     lua_rawgeti(L, 2, 1);   //x1 to stack (3)
     lua_rawgeti(L, 2, 2);   //y1 to stack (4)
     lua_rawgeti(L, 2, 3);   //z1 to stack (5)
@@ -19,6 +21,8 @@ static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3
     point1[0] = lua_tonumber(L, 3);  //stack spot 3 to point1[0]
     point1[1] = lua_tonumber(L, 4);  //stack spot 4 to point1[1]
     point1[2] = lua_tonumber(L, 5);  //stack spot 5 to point1[2]
+
+    //------------------------
 
     lua_rawgeti(L, 1, 2);   //add table 2 to stack (1x3 värden) (6)
     if(lua_istable(L, 6) != 1)
@@ -32,9 +36,11 @@ static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3
     point2[1] = lua_tonumber(L, 8);  //stack spot 8 to point2[1]
     point2[2] = lua_tonumber(L, 9);  //stack spot 9 to point2[2]
 
+    //------------------------
+
     lua_rawgeti(L, 1, 3);   //add table 3 to stack (1x3 värden) (10)
     if(lua_istable(L, 10) != 1)
-        return luaL_error(L, "ERROR: invalid table (point2)");
+        return luaL_error(L, "ERROR: invalid table (point3)");
     lua_rawgeti(L, 10, 1);   //x2 to stack (11)
     lua_rawgeti(L, 10, 2);   //y2 to stack (12)
     lua_rawgeti(L, 10, 3);   //z2 to stack (13)
@@ -44,11 +50,15 @@ static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3
     point3[1] = lua_tonumber(L, 12);  //stack spot 12 to point3[1]
     point3[2] = lua_tonumber(L, 13);  //stack spot 13 to point3[2]
 
+    //------------------------
+
     lua_rawgeti(L, 2, 4);   //checking number of arguments (14)
     lua_rawgeti(L, 6, 4);   //checking number of arguments (15)
     lua_rawgeti(L, 10, 4);   //checking number of arguments (16)
     if(lua_isnumber(L, 14) == 1 || lua_isnumber(L, 15) == 1 || lua_isnumber(L, 16) == 1)
         return luaL_error(L, "ERROR: number of components");
+
+    //------------------------
 
     /*std::cout <<
         "   point1: (" << point1[0] << "," << point1[1] << "," << point1[2] << ")" << std::endl << 
@@ -97,9 +107,9 @@ static int AddBox(lua_State *L){   //AddBox({xPos,yPos,zPos}, size, name)
     return 0;   //return 1 (seccessful) / 0 (failed)
 }
 
+/*
 static int GetNodes(lua_State *L){  //GetNodes()
     //call with: for k,v in pairs(GetNodes()) do print(k,v) end
-
     std::string str = "";
 
     lua_newtable(L);
@@ -116,6 +126,56 @@ static int GetNodes(lua_State *L){  //GetNodes()
 
             lua_pushstring(L, c);
             lua_rawseti(L, 1, i+1);
+        }
+    }
+
+    return 1;
+}
+*/
+
+static int GetNodes(lua_State *L){  //GetNodes()
+    //call with: for k,v in pairs(getNodes()) do for kk,vv in pairs(v) do print(k,kk,vv) end end
+    std::string str1 = "";
+    std::string str2 = "";
+    std::string str3 = "";
+
+    std::string type = "";
+
+    lua_newtable(L); //create table_master in stack (1)
+
+    for(int i = 0; i < name.size(); i++){
+        if(name[i] != ""){
+
+            if(trianglenode[i] != NULL) type = "triangle";
+            else if(meshnode[i]->getType() == irr::scene::ESNT_CUBE) type = "cube    ";
+            else type = "sphere  ";
+
+            //str1 = std::to_string(i);
+            str1 = std::to_string(GetID(i));
+            str2 = type;
+            str3 = name[i];
+
+            const char * c1 = str1.c_str();
+            const char * c2 = str2.c_str();
+            const char * c3 = str3.c_str();
+
+            lua_newtable(L);    //create table_i in stack (i+2)
+
+            lua_pushstring(L, "ID:");
+            lua_pushstring(L, c1);
+            lua_settable(L, -3);    //table_i[1] = str1 (pops -1 & -2)
+
+            lua_pushstring(L, "Type:");
+            lua_pushstring(L, c2);
+            lua_settable(L, -3);    //table_i[2] = str2 (pops -1 & -2)
+
+            lua_pushstring(L, "Name:");
+            lua_pushstring(L, c3);
+            lua_settable(L, -3);    //table_i[3] = str3 (pops -1 & -2)
+
+            lua_pushinteger(L, i+1);
+            lua_insert(L, -2);
+            lua_settable(L, -3);    //table_master[i+1] = table_i[]
         }
     }
 

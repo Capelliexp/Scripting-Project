@@ -211,7 +211,7 @@ int NewTriangle(float point1[3], float point2[3], float point3[3], float uv1[2],
     meshnode.resize(meshnode.size()+1); //increase vector size
     trianglenode.resize(trianglenode.size()+1); //increase vector size
 
-    trianglenode[trianglenode.size()-1] = new TriangleNode(point1, point2, point3, uv1, uv2, uv3, smgr->getRootSceneNode(), smgr, 666);
+    trianglenode[trianglenode.size()-1] = new TriangleNode(point1, point2, point3, uv1, uv2, uv3, smgr->getRootSceneNode(), smgr, (idFreed.size() == 0 ? idTop++ : GetUsedID()));
     
     if(texPath != ""){  //broken
         trianglenode[trianglenode.size()-1]->setMaterialTexture(0, driver->getTexture(texPath));  //add texture to object
@@ -271,6 +271,18 @@ int GetUsedID(){    //KANSKE KLAR
     int returnValue = idFreed.front();
     idFreed.erase(idFreed.begin());
     return returnValue;
+}
+
+int GetID(int i){
+    int id = -1;
+    if(meshnode[i] != NULL){
+        id = meshnode[i]->getID();
+    }
+    else if(trianglenode[i] != NULL){
+        id = trianglenode[i]->GetID();
+    }
+
+    return id;
 }
 
 int ScreenShot(std::string fileName){

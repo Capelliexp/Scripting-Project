@@ -14,6 +14,7 @@ int NewBox(float size, float pos[3], irr::io::path texPath, std::string objectNa
 int NewBall(float size, int pos[3], int scale[3], irr::io::path texPath, std::string objectName);
 int NewTexture(float** colors, int size, std::string name);
 int GetUsedID();
+int GetID(int i);
 int ScreenShot(std::string fileName);
 
 //Irrlicht Handlers
