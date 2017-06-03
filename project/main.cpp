@@ -32,7 +32,7 @@ int main(int argc, char** argv){
 
     std::cout << "CreateIrrBase() " << (CreateIrrBase() ? "successful" : "FAILED") << std::endl;
 
-    //std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
+    std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
 
     //------------------------
 

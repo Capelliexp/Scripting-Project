@@ -5,7 +5,24 @@ main: project/main.cpp project/luaFunctions.cpp project/globals.h project/lua/sr
 	$(CC) project/main.cpp $(CFLAGS) -o $@ -ldl
 
 project/lua/src/liblua.a:
-	cd project/lua/src; make linux
+	cd project; curl https://www.lua.org/ftp/lua-5.3.4.tar.gz -o lua.tgz; \
+	tar -xzvf lua.tgz; \
+	mv lua-5.3.4 lua; \
+	cd lua/src; make linux; \
+	cd ..; cd ..; \
+	rm lua.tgz; \
+	cd ..; \
 
 project/irrlicht/lib/Linux/libIrrlicht.a:
-	cd project/irrlicht/source/Irrlicht/; make linux
+	cd project; \
+	curl -L -oirr.zip http://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip; \
+	unzip irr.zip; \
+	mv irrlicht-1.8.4 irrlicht; \
+	cd irrlicht/source/Irrlicht/; make linux; \
+	cd ..; cd ..; cd ..; \
+	rm irr.zip; \
+	cd ..; \
+
+clean:
+	rm -f main; \
+	cd project; rm -rf lua; rm -rf irrlicht; \
