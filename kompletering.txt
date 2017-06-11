@@ -1,0 +1,9 @@
+( ) Please fix the event handling so that on loss of focus it releases the mouse.
+
+( ) The addMesh needs to process a triangle list rather than just a single triangle.
+
+(x) Bigger limit.
+
+( ) Please find out why the camera does not move in the middle of a sequence.
+
+( ) Error checking on the camera call doesn't work, and it looks like a stale error message in a buffer somewhere.

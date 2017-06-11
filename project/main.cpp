@@ -21,7 +21,7 @@
 #include "globals.h"
 #include "TriangleNode.cpp"
 
-#define STR_SIZE 128
+#define STR_SIZE 1024
 
 int main(int argc, char** argv){
     lua_State* L;
@@ -73,7 +73,7 @@ int main(int argc, char** argv){
             fflush(stdout);
             memset(&str[0], 0, sizeof(str));
             read(0, str, STR_SIZE);
-            
+
             //Lua
             if(luaL_dostring(L, str)){
                 printf("   INPUT ERROR: ");
@@ -147,7 +147,7 @@ int CreateBaseForms(){
 
     /*for(int i = 0; i < name.size(); i++){
         if(name[i] != ""){
-            std::cout << "spot: " << i << ", name: " << name[i] << ", type: " << 
+            std::cout << "spot: " << i << ", name: " << name[i] << ", type: " <<
                 (trianglenode[i] != NULL ? "triangle" : (meshnode[i]->getType() == irr::scene::ESNT_CUBE ? "cube" : "sphere"))
                 << std::endl;
         }
@@ -212,7 +212,7 @@ int NewTriangle(float point1[3], float point2[3], float point3[3], float uv1[2],
     trianglenode.resize(trianglenode.size()+1); //increase vector size
 
     trianglenode[trianglenode.size()-1] = new TriangleNode(point1, point2, point3, uv1, uv2, uv3, smgr->getRootSceneNode(), smgr, (idFreed.size() == 0 ? idTop++ : GetUsedID()));
-    
+
     if(texPath != ""){  //broken
         trianglenode[trianglenode.size()-1]->setMaterialTexture(0, driver->getTexture(texPath));  //add texture to object
     }
@@ -222,11 +222,11 @@ int NewBox(float size, float pos[3], irr::io::path texPath, std::string objectNa
     if(objectName == ""){
         objectName = "Box" + std::to_string(meshnode.size());
     }
-    
+
     name.push_back(objectName);  //name
     meshnode.resize(meshnode.size()+1); //increase vector size
     trianglenode.resize(trianglenode.size()+1); //increase vector size
-    
+
     meshnode[meshnode.size()-1] = smgr->addCubeSceneNode(
         size,0,(idFreed.size() == 0 ? idTop++ : GetUsedID()),irr::core::vector3df(pos[0], pos[1], pos[2]),irr::core::vector3df(0,0,0),
         irr::core::vector3df(1, 1, 1));    //add object
@@ -244,11 +244,11 @@ int NewBall(float size, int pos[3], int scale[3], irr::io::path texPath, std::st
     if(objectName == ""){
         objectName = "Ball" + std::to_string(meshnode.size());
     }
-    
+
     name.push_back(objectName);  //name
     meshnode.resize(meshnode.size()+1); //increase vector size
     trianglenode.resize(trianglenode.size()+1); //increase vector size
-    
+
     meshnode[meshnode.size()-1] = smgr->addSphereSceneNode(
             size,64,0,(idFreed.size() == 0 ? idTop++ : GetUsedID()),irr::core::vector3df(pos[0],pos[1],pos[2]),
             irr::core::vector3df(0,0,0),irr::core::vector3df(scale[0],scale[1],scale[2]));    //add object
@@ -294,7 +294,7 @@ int ScreenShot(std::string fileName){
     snprintf(filename, 64, c);
 
     driver->writeImageToFile(image, filename);
- 
+
     image->drop();
     captureScene = "";
 }
