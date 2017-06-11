@@ -32,7 +32,7 @@ int main(int argc, char** argv){
 
     std::cout << "CreateIrrBase() " << (CreateIrrBase() ? "successful" : "FAILED") << std::endl;
 
-    std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
+    //std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
 
     //------------------------
 
@@ -172,9 +172,6 @@ int CreateLuaFunctions(lua_State* L){
     lua_pushcfunction(L, Snapshot);
     lua_setglobal(L, "snapshot");
 
-    lua_pushcfunction(L, AddTexture);
-    lua_setglobal(L, "addTexture");
-
     return 1;
 }
 
@@ -216,6 +213,8 @@ int NewTriangle(float point1[3], float point2[3], float point3[3], float uv1[2],
     if(texPath != ""){  //broken
         trianglenode[trianglenode.size()-1]->setMaterialTexture(0, driver->getTexture(texPath));  //add texture to object
     }
+
+    return 1;
 }
 
 int NewBox(float size, float pos[3], irr::io::path texPath, std::string objectName){
@@ -262,12 +261,13 @@ int NewBall(float size, int pos[3], int scale[3], irr::io::path texPath, std::st
     return 1;
 }
 
-int NewTexture(float** colors, int size, std::string name){    //EJ KLAR
-
-    return 1;
+int MoveCamera(float pos[3], float look[3]){
+    camera->setPosition(irr::core::vector3df(pos[0],pos[1],pos[2]));
+    camera->updateAbsolutePosition();
+    camera->setTarget(irr::core::vector3df(look[0],look[1],look[2]));
 }
 
-int GetUsedID(){    //KANSKE KLAR
+int GetUsedID(){
     int returnValue = idFreed.front();
     idFreed.erase(idFreed.begin());
     return returnValue;

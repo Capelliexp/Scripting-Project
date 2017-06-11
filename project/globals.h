@@ -12,7 +12,7 @@ int NewLight(float x, float y, float z);
 int NewTriangle(float point1[3], float point2[3], float point3[3], float uv1[2], float uv2[2], float uv3[2], irr::io::path texPath, std::string name);
 int NewBox(float size, float pos[3], irr::io::path texPath, std::string objectName);
 int NewBall(float size, int pos[3], int scale[3], irr::io::path texPath, std::string objectName);
-int NewTexture(float** colors, int size, std::string name);
+int MoveCamera(float pos[3], float look[3]);
 int GetUsedID();
 int GetID(int i);
 int ScreenShot(std::string fileName);

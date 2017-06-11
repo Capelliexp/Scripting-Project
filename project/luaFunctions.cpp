@@ -3,7 +3,7 @@
 
 #include "globals.h"
 
-static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3}, ...})  -  OBS! 1 parameter
+/*static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3}, ...})  -  OBS! 1 parameter
     float point1[3], point2[3], point3[3];
 
     luaL_checktype(L, 1, LUA_TTABLE);
@@ -60,16 +60,16 @@ static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3
 
     //------------------------
 
-    /*std::cout <<
+    std::cout <<
         "   point1: (" << point1[0] << "," << point1[1] << "," << point1[2] << ")" << std::endl <<
         "   point2: (" << point2[0] << "," << point2[1] << "," << point2[2] << ")" << std::endl <<
-        "   point3: (" << point3[0] << "," << point3[1] << "," << point3[2] << ")" << std::endl;*/
+        "   point3: (" << point3[0] << "," << point3[1] << "," << point3[2] << ")" << std::endl;
 
     float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5,1};
     NewTriangle(point1, point2, point3, uv1, uv2, uv3, "", "");
 
     return 0;
-}
+}*/
 
 static int AddMesh(lua_State *L){
 	luaL_checktype(L, 1, LUA_TTABLE);
@@ -79,24 +79,32 @@ static int AddMesh(lua_State *L){
 		float point[9];
 		
 		for(int i = 0; i < 3; i++){
-			    lua_rawgeti(L, 1, i+(3*meshCount));   //add table to stack (1x3 values)
-				if(lua_istable(L, 2) != 1)
-					if(meshCount > 0 && i == 1)
+			    lua_rawgeti(L, 1, (i+1)+(3*meshCount));   //add table to stack (1x3 values)
+				if(lua_istable(L, -1) != 1)
+					if(meshCount > 0 && i == 0)
 						return 0;
 					else
 						return luaL_error(L, "ERROR: invalid table");
 						
-				lua_rawgeti(L, 2, 1);   //x_i to stack (3)	//fel!!!
-				lua_rawgeti(L, 2, 2);   //y_i to stack (4)
-				lua_rawgeti(L, 2, 3);   //z_i to stack (5)
-				if(lua_isnumber(L, 3) != 1 && lua_isnumber(L, 4) != 1 && lua_isnumber(L, 5) != 1)
+				lua_rawgeti(L, -1, 1);  //x_i to stack
+				lua_rawgeti(L, -2, 2);  //y_i to stack
+				lua_rawgeti(L, -3, 3);  //z_i to stack
+				if(lua_isnumber(L, -1) != 1 && lua_isnumber(L, -2) != 1 && lua_isnumber(L, -3) != 1)
 					return luaL_error(L, "ERROR: invalid coordinates");
 					
-				point[0+(3*i)] = lua_tonumber(L, 3);//fel!!!  //stack spot 3 to point1[0]
-				point[1+(3*i)] = lua_tonumber(L, 4);  //stack spot 4 to point1[1]
-				point[2+(3*i)] = lua_tonumber(L, 5);  //stack spot 5 to point1[2]
+				point[0+(3*i)] = lua_tonumber(L, -3);    //stack spot x to point1[0]
+				point[1+(3*i)] = lua_tonumber(L, -2);    //stack spot y to point1[1]
+				point[2+(3*i)] = lua_tonumber(L, -1);    //stack spot z to point1[2]
 		}
-		
+
+		float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5,1};
+        float point1[3] = {point[0], point[1], point[2]};
+        float point2[3] = {point[4], point[5], point[6]};
+        float point3[3] = {point[7], point[8], point[9]};
+
+        if(!NewTriangle(point1, point2, point3, uv1, uv2, uv3, "", ""))
+            return luaL_error(L, "ERROR: unable to create triangle");
+
 		meshCount++;
 	}
 }
@@ -134,7 +142,7 @@ static int AddBox(lua_State *L){   //AddBox({xPos,yPos,zPos}, size, name)
 
     NewBox(size, coords, "", name);
 
-    return 0;   //return 1 (seccessful) / 0 (failed)
+    return 0;
 }
 
 static int GetNodes(lua_State *L){  //GetNodes()
@@ -220,8 +228,7 @@ static int Camera(lua_State *L){    //Camera({xPos,yPos,zPos}, {xLook,yLook,zLoo
     std::cout << "   New Look: ";
     std::cout << look[0] << " " << look[1] << " " << look[2] << std::endl;*/
 
-    camera->setPosition(irr::core::vector3df(pos[0],pos[1],pos[2]));
-    camera->setTarget(irr::core::vector3df(look[0],look[1],look[2]));
+    MoveCamera(pos, look);
 
     return 0;
 }
