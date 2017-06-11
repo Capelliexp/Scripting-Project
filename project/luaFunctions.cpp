@@ -3,7 +3,7 @@
 
 #include "globals.h"
 
-static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3}})  -  OBS! 1 parameter
+static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3}, ...})  -  OBS! 1 parameter
     float point1[3], point2[3], point3[3];
 
     luaL_checktype(L, 1, LUA_TTABLE);
@@ -61,14 +61,44 @@ static int AddMesh(lua_State *L){   //AddMesh({{x1,y1,z1}, {x2,y2,z2}, {x3,y3,z3
     //------------------------
 
     /*std::cout <<
-        "   point1: (" << point1[0] << "," << point1[1] << "," << point1[2] << ")" << std::endl << 
-        "   point2: (" << point2[0] << "," << point2[1] << "," << point2[2] << ")" << std::endl << 
+        "   point1: (" << point1[0] << "," << point1[1] << "," << point1[2] << ")" << std::endl <<
+        "   point2: (" << point2[0] << "," << point2[1] << "," << point2[2] << ")" << std::endl <<
         "   point3: (" << point3[0] << "," << point3[1] << "," << point3[2] << ")" << std::endl;*/
 
     float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5,1};
     NewTriangle(point1, point2, point3, uv1, uv2, uv3, "", "");
 
     return 0;
+}
+
+static int AddMesh(lua_State *L){
+	luaL_checktype(L, 1, LUA_TTABLE);
+	
+	int meshCount = 0;
+	while(1){
+		float point[9];
+		
+		for(int i = 0; i < 3; i++){
+			    lua_rawgeti(L, 1, i+(3*meshCount));   //add table to stack (1x3 values)
+				if(lua_istable(L, 2) != 1)
+					if(meshCount > 0 && i == 1)
+						return 0;
+					else
+						return luaL_error(L, "ERROR: invalid table");
+						
+				lua_rawgeti(L, 2, 1);   //x_i to stack (3)	//fel!!!
+				lua_rawgeti(L, 2, 2);   //y_i to stack (4)
+				lua_rawgeti(L, 2, 3);   //z_i to stack (5)
+				if(lua_isnumber(L, 3) != 1 && lua_isnumber(L, 4) != 1 && lua_isnumber(L, 5) != 1)
+					return luaL_error(L, "ERROR: invalid coordinates");
+					
+				point[0+(3*i)] = lua_tonumber(L, 3);//fel!!!  //stack spot 3 to point1[0]
+				point[1+(3*i)] = lua_tonumber(L, 4);  //stack spot 4 to point1[1]
+				point[2+(3*i)] = lua_tonumber(L, 5);  //stack spot 5 to point1[2]
+		}
+		
+		meshCount++;
+	}
 }
 
 static int AddBox(lua_State *L){   //AddBox({xPos,yPos,zPos}, size, name)
@@ -106,32 +136,6 @@ static int AddBox(lua_State *L){   //AddBox({xPos,yPos,zPos}, size, name)
 
     return 0;   //return 1 (seccessful) / 0 (failed)
 }
-
-/*
-static int GetNodes(lua_State *L){  //GetNodes()
-    //call with: for k,v in pairs(GetNodes()) do print(k,v) end
-    std::string str = "";
-
-    lua_newtable(L);
-
-    for(int i = 0; i < name.size(); i++){
-        
-        if(name[i] != ""){
-
-            str = "ID: " + std::to_string(i) +
-                " | type: " + (trianglenode[i] != NULL ? "triangle" : (meshnode[i]->getType() == irr::scene::ESNT_CUBE ? "cube    " : "sphere  ")) + 
-                " | name: " + name[i];
-
-            const char * c = str.c_str();
-
-            lua_pushstring(L, c);
-            lua_rawseti(L, 1, i+1);
-        }
-    }
-
-    return 1;
-}
-*/
 
 static int GetNodes(lua_State *L){  //GetNodes()
     //call with: for k,v in pairs(getNodes()) do for kk,vv in pairs(v) do print(k,kk,vv) end end
@@ -227,11 +231,6 @@ static int Snapshot(lua_State *L){  //Snapshot(name)
     std::string name = lua_tostring(L, 1);
     captureScene = name;
     captureSceneCount = 1;
-    return 0;
-}
-
-static int AddTexture(lua_State *L){  //AddTexture({{{1.0,0.5,0.5},...},{{0.5,0.5,1.0},...}...}, "yoyo")  -  OBS! 2 parameters, varying size of parameter 1
-
     return 0;
 }
 
