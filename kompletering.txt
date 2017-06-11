@@ -6,6 +6,6 @@
 
 (x) Please find out why the camera does not move in the middle of a sequence.
 
-( ) Error checking on the camera call doesn't work, and it looks like a stale error message in a buffer somewhere.
+(x) Error checking on the camera call doesn't work, and it looks like a stale error message in a buffer somewhere.
 
 ( ) Remove pre-rendered shapes

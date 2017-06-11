@@ -21,7 +21,7 @@
 #include "globals.h"
 #include "TriangleNode.cpp"
 
-#define STR_SIZE 1024
+#define STR_SIZE 2048
 
 int main(int argc, char** argv){
     lua_State* L;
@@ -32,7 +32,7 @@ int main(int argc, char** argv){
 
     std::cout << "CreateIrrBase() " << (CreateIrrBase() ? "successful" : "FAILED") << std::endl;
 
-    //std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
+    std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
 
     //------------------------
 
@@ -64,6 +64,8 @@ int main(int argc, char** argv){
         else
             captureSceneCount = 0;
 
+        irrDevice->isWindowActive()
+
         //Terminal
         FD_ZERO(&readset);
         FD_SET(0, &readset);
@@ -71,15 +73,19 @@ int main(int argc, char** argv){
 
         if(result > 0){
             fflush(stdout);
-            memset(&str[0], 0, sizeof(str));
+            memset(&str[0], 0, STR_SIZE);
             read(0, str, STR_SIZE);
+
+            std::cout << "HERE COME THE STRING 1: " << str << std::endl;
 
             //Lua
             if(luaL_dostring(L, str)){
                 printf("   INPUT ERROR: ");
-                std::cout << lua_tostring(L, 1) << std::endl;
+                std::cout << lua_tostring(L, -1) << std::endl;
             }
-            memset(&str[0], 0, sizeof(str));
+            std::cout << "HERE COME THE STRING 2: " << str << std::endl;
+            memset(&str[0], 0, STR_SIZE);
+            std::cout << "HERE COME THE STRING 3: " << str << std::endl;
             printf("\n>> ");
             fflush(stdout);
         }
@@ -180,7 +186,7 @@ int ReadLuaScript(lua_State* L, int argc, char** argv){
     if(argc > 1){   //main-parameter
         if(luaL_dofile(L, argv[1])){
             printf("error executing lua file \n");
-            std::cout << lua_tostring(L, 1) << std::endl;
+            std::cout << lua_tostring(L, -1) << std::endl;
             return 0;
         }
         else{
