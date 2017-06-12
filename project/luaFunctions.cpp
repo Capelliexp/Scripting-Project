@@ -32,8 +32,9 @@ static int AddMesh(lua_State *L){
 				point[2+(3*i)] = lua_tonumber(L, -1);    //stack spot z to point1[2]
 
                 lua_rawgeti(L, -4, 4);   //checking size of array
-                if((lua_isnumber(L, -1) == 1))
-                    return luaL_error(L, "ERROR: number of components");
+                /*if((lua_isnumber(L, -1) == 1))
+                    return luaL_error(L, "ERROR: number of components");*/
+                luaL_argcheck(L, (lua_type(L, -1) != LUA_TNUMBER), 0, "ERROR: number of components");
 		}
 
 		float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5,1};

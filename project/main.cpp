@@ -36,10 +36,8 @@ int main(int argc, char** argv){
 
     //------------------------
 
-     //lua: create input-string
-
     timeval time;   //lua: allt select()/read()
-    time.tv_usec = 1000000/60;
+    time.tv_usec = 1000000/60;  //60Hz
     time.tv_sec = 0;
     fd_set readset;
     int result = 0;
@@ -79,7 +77,7 @@ int main(int argc, char** argv){
         result = select(0+1, &readset, NULL, NULL, &time);
 
         if(result > 0){
-            char str[STR_SIZE];
+            char str[STR_SIZE]; //lua: create input-string
             fflush(stdout);
             memset(&str[0], 0, STR_SIZE);
             read(0, str, STR_SIZE);
