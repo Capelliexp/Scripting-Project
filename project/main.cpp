@@ -32,11 +32,11 @@ int main(int argc, char** argv){
 
     std::cout << "CreateIrrBase() " << (CreateIrrBase() ? "successful" : "FAILED") << std::endl;
 
-    std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
+    //std::cout << "CreateBaseForms() " << (CreateBaseForms() ? "successful" : "FAILED") << std::endl;
 
     //------------------------
 
-    char str[STR_SIZE]; //lua: create input-string
+     //lua: create input-string
 
     timeval time;   //lua: allt select()/read()
     time.tv_usec = 1000000/60;
@@ -59,12 +59,19 @@ int main(int argc, char** argv){
     fflush(stdout);
 
     while(irrDevice->run()){
+
+        //Frame Checks
         if(captureScene != "" && captureSceneCount == 0)
             ScreenShot(captureScene);
         else
             captureSceneCount = 0;
 
-        irrDevice->isWindowActive()
+        if(mouseLock == false && irrDevice->isWindowActive())
+            SwitchCamera();
+        else if(mouseLock == true && !(irrDevice->isWindowActive()))
+            SwitchCamera();
+
+        //------------------------
 
         //Terminal
         FD_ZERO(&readset);
@@ -72,20 +79,17 @@ int main(int argc, char** argv){
         result = select(0+1, &readset, NULL, NULL, &time);
 
         if(result > 0){
+            char str[STR_SIZE];
             fflush(stdout);
             memset(&str[0], 0, STR_SIZE);
             read(0, str, STR_SIZE);
-
-            std::cout << "HERE COME THE STRING 1: " << str << std::endl;
 
             //Lua
             if(luaL_dostring(L, str)){
                 printf("   INPUT ERROR: ");
                 std::cout << lua_tostring(L, -1) << std::endl;
             }
-            std::cout << "HERE COME THE STRING 2: " << str << std::endl;
             memset(&str[0], 0, STR_SIZE);
-            std::cout << "HERE COME THE STRING 3: " << str << std::endl;
             printf("\n>> ");
             fflush(stdout);
         }
@@ -126,13 +130,19 @@ int CreateIrrBase(){
 
     //-----
 
-    camera = smgr->addCameraSceneNodeFPS(0, 1.0f, 0.5f, -1, 0, 0, false, 0.f, false, true); //parent, rotSpeed, moveSpeed,...
-    camera->setPosition(irr::core::vector3df(60,60,10));
-    camera->setTarget(irr::core::vector3df(0,0,0));
+    cameraFREE = smgr->addCameraSceneNode(0, core::vector3df(60,60,10), irr::core::vector3df(0,0,0), -1, false);
+
+    cameraFPS = smgr->addCameraSceneNodeFPS(0, 1.0f, 0.5f, -1, 0, 0, false, 0.f, false, true); //parent, rotSpeed, moveSpeed,...
+    cameraFPS->setPosition(irr::core::vector3df(60,60,10));
+    cameraFPS->setTarget(irr::core::vector3df(0,0,0));
+
+    //-----
 
     captureScene = "";
     captureSceneCount = 0;
     idTop = 0;
+
+    mouseLock = true;
 
     return 1;
 }
@@ -268,9 +278,13 @@ int NewBall(float size, int pos[3], int scale[3], irr::io::path texPath, std::st
 }
 
 int MoveCamera(float pos[3], float look[3]){
-    camera->setPosition(irr::core::vector3df(pos[0],pos[1],pos[2]));
-    camera->updateAbsolutePosition();
-    camera->setTarget(irr::core::vector3df(look[0],look[1],look[2]));
+    cameraFREE->setPosition(irr::core::vector3df(pos[0],pos[1],pos[2]));
+    cameraFREE->updateAbsolutePosition();
+    cameraFREE->setTarget(irr::core::vector3df(look[0],look[1],look[2]));
+
+    cameraFPS->setPosition(irr::core::vector3df(pos[0],pos[1],pos[2]));
+    cameraFPS->updateAbsolutePosition();
+    cameraFPS->setTarget(irr::core::vector3df(look[0],look[1],look[2]));
 }
 
 int GetUsedID(){
@@ -303,4 +317,23 @@ int ScreenShot(std::string fileName){
 
     image->drop();
     captureScene = "";
+}
+
+int SwitchCamera(){
+    if(mouseLock == true){
+        cameraFREE->setPosition(cameraFPS->getPosition());
+        cameraFREE->updateAbsolutePosition();
+        cameraFREE->setTarget(cameraFPS->getTarget());
+
+        smgr->setActiveCamera(cameraFREE);
+        mouseLock = false;
+    }
+    else{
+        cameraFPS->setPosition(cameraFREE->getPosition());
+        cameraFPS->updateAbsolutePosition();
+        cameraFPS->setTarget(cameraFREE->getTarget());
+
+        smgr->setActiveCamera(cameraFPS);
+        mouseLock = true;
+    }
 }

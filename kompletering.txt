@@ -1,4 +1,4 @@
-( ) Please fix the event handling so that on loss of focus it releases the mouse.
+(?) Please fix the event handling so that on loss of focus it releases the mouse.
 
 (x) The addMesh needs to process a triangle list rather than just a single triangle.
 
@@ -8,4 +8,4 @@
 
 (x) Error checking on the camera call doesn't work, and it looks like a stale error message in a buffer somewhere.
 
-( ) Remove pre-rendered shapes
+(x) Remove pre-rendered shapes

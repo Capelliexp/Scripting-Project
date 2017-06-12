@@ -16,6 +16,7 @@ int MoveCamera(float pos[3], float look[3]);
 int GetUsedID();
 int GetID(int i);
 int ScreenShot(std::string fileName);
+int SwitchCamera();
 
 //Irrlicht Handlers
 irr::IrrlichtDevice *irrDevice;
@@ -24,7 +25,8 @@ irr::scene::ISceneManager* smgr;
 irr::gui::IGUIEnvironment* irrGUIEnv;
 
 //Irrlicht Base/Scene
-irr::scene::ICameraSceneNode* camera;
+irr::scene::ICameraSceneNode* cameraFPS;
+irr::scene::ICameraSceneNode* cameraFREE;
 std::vector<irr::scene::ILightSceneNode*> light;
 
 //Objects
@@ -32,10 +34,16 @@ std::vector<std::string> name;
 std::vector<irr::scene::IMeshSceneNode*> meshnode;
 std::vector<TriangleNode*> trianglenode;
 
+//Var - ID Distributers
 int idTop;
 std::vector<int> idFreed;
 
+//Var - Screen Capture 
 std::string captureScene;
 int captureSceneCount;
+
+//Var - Mouse Bind
+bool mouseLock;
+
 
 #endif

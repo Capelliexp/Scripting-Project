@@ -5,13 +5,9 @@
 
 static int AddMesh(lua_State *L){
 	luaL_checktype(L, 1, LUA_TTABLE);
-	
-    std::cout << "111" << std::endl;
 
     if(lua_gettop(L) > 1)
         return luaL_error(L, "ERROR: number of arguments");
-
-    std::cout << "222" << std::endl;
 
 	int meshCount = 0;
 	while(1){
@@ -40,9 +36,6 @@ static int AddMesh(lua_State *L){
                     return luaL_error(L, "ERROR: number of components");
 		}
 
-        std::cout << "333" << std::endl;
-
-
 		float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5,1};
         float point1[3] = {point[0], point[1], point[2]};
         float point2[3] = {point[4], point[5], point[6]};
@@ -51,29 +44,19 @@ static int AddMesh(lua_State *L){
         if(!NewTriangle(point1, point2, point3, uv1, uv2, uv3, "", ""))
             return luaL_error(L, "ERROR: unable to create triangle");
 
-        std::cout << "444" << std::endl;
-
-
 		meshCount++;
 	}
-    std::cout << "999999" << std::endl;
 }
 
 static int AddBox(lua_State *L){   //AddBox({xPos,yPos,zPos}, size, name)
     float coords[3], size;
     std::string name = "";
 
-    std::cout << "111" << std::endl;
-
     luaL_checktype(L, 1, LUA_TTABLE);
     luaL_checktype(L, 2, LUA_TNUMBER);
 
-    std::cout << "222" << std::endl;
-
     if(lua_gettop(L) > 3)
         return luaL_error(L, "ERROR: number of arguments");
-
-    std::cout << "333" << std::endl;
 
     size = lua_tonumber(L, 2);
 
@@ -91,21 +74,11 @@ static int AddBox(lua_State *L){   //AddBox({xPos,yPos,zPos}, size, name)
     coords[1] = lua_tonumber(L, 5);  //retrieve yPos from stack at 5
     coords[2] = lua_tonumber(L, 6);  //retrieve zPos from stack at 6
 
-    std::cout << "444" << std::endl;
-
     lua_rawgeti(L, 1, 4);   //checking number of arguments
     if(lua_isnumber(L, -1) == 1)
         return luaL_error(L, "ERROR: number of components");
 
-    std::cout << "555" << std::endl;
-
-    /*std::cout << "   AddBox() coords: ";
-    std::cout << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
-    std::cout << "   size: " << size << ", name: " << name << std::endl;*/
-
     NewBox(size, coords, "", name);
-
-    std::cout << "666" << std::endl;
 
     return 0;
 }
@@ -196,11 +169,6 @@ static int Camera(lua_State *L){    //Camera({xPos,yPos,zPos}, {xLook,yLook,zLoo
     lua_rawgeti(L, 2, 4);   //checking number of arguments (10)
     if(lua_isnumber(L, -1) == 1 || lua_isnumber(L, -2) == 1)
         return luaL_error(L, "ERROR: number of components");
-
-    /*std::cout << "   New Pos: ";
-    std::cout << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
-    std::cout << "   New Look: ";
-    std::cout << look[0] << " " << look[1] << " " << look[2] << std::endl;*/
 
     MoveCamera(pos, look);
 
