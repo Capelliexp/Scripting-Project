@@ -11,15 +11,16 @@
 io.write("   addBox(): \n")
 addBox({0,0,0}, 4, "testBox1")
 addBox({-20,10,30}, 4, "testBox1")
-addBox({-20,10,30}, 4)
-addBox({-20,30}, 4, "testBox1")
-addBox({-20,10,30})
-addBox({-20,,10,30})
+addBox({-20,10,40}, 4)
+addBox({-20,30}, 4, "testBox1") -- Error: Bad argument 1
+addBox({-20,10,30}) -- Error: Bad argument 2
+addBox({-20,,10,30}) -- Error: NaN
 
 io.write("\n   addMesh(): \n")
-addMesh({{1,2,3},{4,5,6},{7,8,9} , {6,7,8},{9,10,11},{12,13,14}})
-addMesh({{50,50,50}, {50,70,50}, {50,60,80}})
-addMesh({{orange},{},{}}) -- Error: non-numeric coordinates
+addMesh({{50,40,60}, {20,70,50}, {50,30,50}})
+addMesh({{10,10,10},{30,10,30},{30,-50,-30}})
+addMesh({{50,50,50},{50,70,50},{50,60,80} , {0,0,0},{30,30,30},{30,-30,-30}})
+addMesh({{red},{},{}}) -- Error: non-numeric coordinates
 addMesh({{"orange",2,3},{1,2,3},{1,2,3}}) -- Error: non-numeric coordinates
 addMesh({{1,2,3,4},{1,1,1},{2,2,2}}) -- Error: number of components
 addMesh({{1,2,3}}) -- Error: not a valid number of vertices

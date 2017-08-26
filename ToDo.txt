@@ -1,0 +1,24 @@
+( ) Calling getnodes causes the program to abort with memory corruption:
+		1. Att skapa en massa (fungerande) former är inget problem.
+		2. Att anropa Lua-kommandon felaktigt skapar inget minnesproblem.
+		3. Att först skapa former och sedan anropa felaktiga Lua-kommandon är inget problem.
+		4. addMesh({{1,2,3},{4,5,6},{7,8,9} , {6,7,8},{9,10,11},{12,13,14}}) skapar problem när man vill använda getNodes()
+			I. det är inte problem med längden av strängen
+		5. All data sparas korrekt, tror jag
+		6. Det verkar som att programmet crashar när getNodes() returnerar.
+
+		Lösningar:
+			1. Använd inte early return i AddMesh(), kör istället:
+				I. Räkna istället antalet koordinater och använd for-sats
+				II. flytta checken längre ner och avbryt while-satsen som vanligt.
+
+		https://stackoverflow.com/questions/39657474/realloc-invalid-next-size-core-dumped
+		https://stackoverflow.com/questions/26660349/c-realloc-char-invalid-next-size-error
+		https://stackoverflow.com/questions/22396942/problems-with-realloc-invalid-next-size
+
+(x) addMesh() not updating the geometry
+		Troligtvis hittat felet...
+
+( ) ta bort alla lua_settop(L, 0)
+
+( ) ta bort alla cout's

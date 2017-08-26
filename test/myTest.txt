@@ -1,0 +1,44 @@
+--create boxes w. name:
+addBox({-20,10,10}, 4, "testBox1")
+addBox({-20,10,20}, 4, "testBox2")
+
+--create boxes:
+addBox({-20,10,30}, 4)
+addBox({-20,10,40}, 4)
+addBox({-20,10,50}, 4)
+addBox({-20,10,60}, 4)
+addBox({-20,10,70}, 4)
+
+--create boxes w. name:
+addBox({-20,10,80}, 4, "testBox3")
+addBox({-20,10,90}, 4, "testBox4")
+
+--------------------------
+
+--create triangles:
+addMesh({{50,50,50}, {50,70,50}, {50,60,80}})
+addMesh({{40,50,50}, {40,70,60}, {50,20,80}})
+addMesh({{30,50,50}, {30,70,60}, {50,20,80}})
+
+--------------------------
+
+--create boxes w. name:
+addBox({-20,10,100}, 4, "testBox5")
+addBox({-20,10,110}, 4, "testBox6")
+
+--create boxes:
+addBox({-20,10,120}, 4)
+addBox({-20,10,130}, 4)
+addBox({-20,10,140}, 4)
+addBox({-20,10,150}, 4)
+addBox({-20,10,160}, 4)
+
+--create boxes w. name:
+addBox({-20,10,170}, 4, "testBox7")
+addBox({-20,10,180}, 4, "testBox8")
+
+--move camera:
+camera({50,50,-50}, {0,0,160})
+
+--list objects - crash?:
+for k,v in pairs(getNodes()) do for kk,vv in pairs(v) do print(k,kk,vv) end end
