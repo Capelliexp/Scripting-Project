@@ -10,8 +10,6 @@ int CreateLuaFunctions(lua_State* L);
 int CreateBaseForms();
 int NewLight(float x, float y, float z);
 int NewTriangle(float point1[3], float point2[3], float point3[3], float uv1[2], float uv2[2], float uv3[2], irr::io::path texPath, std::string name);
-/*int NewTriangle( irr::io::path texPath, std::string objectName, float point1x, float point1y, float point1z, float point2x, float point2y, float point2z, 
-	float point3x, float point3y, float point3z, float uv1x, float uv1y, float uv2x, float uv2y, float uv3x, float uv3y );*/
 int NewBox(float size, float pos[3], irr::io::path texPath, std::string objectName);
 int NewBall(float size, int pos[3], int scale[3], irr::io::path texPath, std::string objectName);
 int MoveCamera(float pos[3], float look[3]);

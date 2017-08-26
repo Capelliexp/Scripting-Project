@@ -87,7 +87,6 @@ int main(int argc, char** argv){
 
             //Lua
             if(luaL_dostring(L, str)){
-                std::cout << "dostring return" << std::endl;
                 printf("   INPUT ERROR: ");
                 std::cout << lua_tostring(L, -1) << std::endl;
             }
@@ -157,9 +156,9 @@ int CreateBaseForms(){
     int p2[3] = {0,30,0}; int s2[3] = {2,2,2};
     NewBall(5, p2, s2, "project/tex/mars.jpg", "Mars");
 
-    //float a[3] = {20, 20, 20}; float b[3] = {50, 20, 20}; float c[3] = {35, 50, 20};
-    //float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5, 1};
-    //NewTriangle(a, b, c, uv1, uv2, uv3, "", "");
+    float a[3] = {20, 20, 20}; float b[3] = {50, 20, 20}; float c[3] = {35, 50, 20};
+    float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5, 1};
+    NewTriangle(a, b, c, uv1, uv2, uv3, "", "");
 
     float p3[3] = {0,15,0};
     NewBox(10, p3, "project/tex/blue.png", "");
@@ -233,54 +232,8 @@ int NewTriangle(float point1[3], float point2[3], float point3[3], float uv1[2],
         trianglenode[trianglenode.size()-1]->setMaterialTexture(0, driver->getTexture(texPath));  //add texture to object
     }
 
-    /*std::cout << "Adding triangle with data: {" <<
-        point1[0] << "," << point1[1] << "," << point1[2] << "}, {" <<
-        point2[0] << "," << point2[1] << "," << point2[2] << "}, {" <<
-        point3[0] << "," << point3[1] << "," << point3[2] << "} - ID: " << 
-        GetID(trianglenode.size()-1) << ", Name: " << name[trianglenode.size()-1] << std::endl;*/
-
     return 1;
 }
-
-/*
-int NewTriangle( irr::io::path texPath, std::string objectName, 
-    float point1x, float point1y, float point1z, 
-    float point2x, float point2y, float point2z, 
-    float point3x, float point3y, float point3z, 
-    float uv1x, float uv1y, 
-    float uv2x, float uv2y, 
-    float uv3x, float uv3y ){
-
-    if(objectName == ""){
-        objectName = "Triangle" + std::to_string(meshnode.size());  //<-- OBS! kanske inte är "meshnode" som ska användas
-    }
-
-    float point1[3] = {point1x, point1y, point1z};
-    float point2[3] = {point2x, point2y, point2z};
-    float point3[3] = {point3x, point3y, point3z};
-    float uv1[2] = {uv1x, uv1y};
-    float uv2[2] = {uv2x, uv2y};
-    float uv3[2] = {uv3x, uv3y};
-
-    name.push_back(objectName);  //name
-    meshnode.resize(meshnode.size()+1); //increase vector size
-    trianglenode.resize(trianglenode.size()+1); //increase vector size
-
-    trianglenode[trianglenode.size()-1] = new TriangleNode(point1, point2, point3, uv1, uv2, uv3, smgr->getRootSceneNode(), smgr, (idFreed.size() == 0 ? idTop++ : GetUsedID()));
-
-    if(texPath != ""){  //broken
-        trianglenode[trianglenode.size()-1]->setMaterialTexture(0, driver->getTexture(texPath));  //add texture to object
-    }
-
-    std::cout << "Adding triangle with data: {" <<
-        point1[0] << "," << point1[1] << "," << point1[2] << "}, {" <<
-        point2[0] << "," << point2[1] << "," << point2[2] << "}, {" <<
-        point3[0] << "," << point3[1] << "," << point3[2] << "} - ID: " << 
-        GetID(trianglenode.size()-1) << ", Name: " << name[trianglenode.size()-1] << std::endl;
-
-    return 1;
-}
-*/
 
 int NewBox(float size, float pos[3], irr::io::path texPath, std::string objectName){
     if(objectName == ""){
