@@ -21,7 +21,7 @@
 #include "globals.h"
 #include "TriangleNode.cpp"
 
-#define STR_SIZE 16384
+#define STR_SIZE 8192
 
 int main(int argc, char** argv){
     lua_State* L;
@@ -94,6 +94,9 @@ int main(int argc, char** argv){
             memset(&str[0], 0, STR_SIZE);
             printf("\n>> ");
             fflush(stdout);
+
+            for(int i = 0; i < STR_SIZE; i++)
+                str[i] = 0;
         }
 
         //------------------------

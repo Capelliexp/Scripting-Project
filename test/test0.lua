@@ -7,7 +7,6 @@
 
 --io.write("   AddMesh({{1,2,3},{4,5,6},{7,8,9}}) \n")
 
-
 io.write("   addBox(): \n")
 addBox({0,0,0}, 4, "testBox1")
 addBox({-20,10,30}, 4, "testBox1")

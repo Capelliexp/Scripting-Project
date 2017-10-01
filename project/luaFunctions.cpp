@@ -3,8 +3,8 @@
 
 #include "globals.h"
 
-static int AddMesh(lua_State *L){
-	luaL_checktype(L, 1, LUA_TTABLE);
+/*static int AddMesh(lua_State *L){
+    luaL_checktype(L, 1, LUA_TTABLE);
 
     if(lua_gettop(L) > 1)
         return luaL_error(L, "ERROR: number of arguments");
@@ -15,29 +15,29 @@ static int AddMesh(lua_State *L){
     if((verticeCount < 3) || ((verticeCount%3) != 0))
         return luaL_error(L, "ERROR: invalid number of coordinates");
 
-    for(int i = 0; i < (verticeCount/3); i++){
-		float point[9];
-		
-		for(int i = 0; i < 3; i++){   //1 loop for every 1 point (with x,y,z-values)
-			    lua_rawgeti(L, 1, (i+1)+(3*meshCount));   //add table to stack (1x3 values)
-				if(lua_istable(L, -1) != 1)
-					return luaL_error(L, "ERROR: invalid table");
-						
-				lua_rawgeti(L, -1, 1);  //x_i to stack
-				lua_rawgeti(L, -2, 2);  //y_i to stack
-				lua_rawgeti(L, -3, 3);  //z_i to stack
-				if(lua_isnumber(L, -1) != 1 || lua_isnumber(L, -2) != 1 || lua_isnumber(L, -3) != 1)
-					return luaL_error(L, "ERROR: invalid coordinates");
-					
-				point[0+(3*i)] = lua_tonumber(L, -3);    //stack spot x to point1[0]
-				point[1+(3*i)] = lua_tonumber(L, -2);    //stack spot y to point1[1]
-				point[2+(3*i)] = lua_tonumber(L, -1);    //stack spot z to point1[2]
+    for(int i = 0; i < (verticeCount/3); i++){  //loop once for every mesh to be drawn
+        float point[9];
+        
+        for(int i = 0; i < 3; i++){   //1 loop for every 1 point (with x,y,z-values)
+            lua_rawgeti(L, 1, (i+1)+(3*meshCount));   //add table to stack (1x3 values)
+            if(lua_istable(L, -1) != 1)
+            return luaL_error(L, "ERROR: invalid table");
+                    
+            lua_rawgeti(L, -1, 1);  //x_i to stack
+            lua_rawgeti(L, -2, 2);  //y_i to stack
+            lua_rawgeti(L, -3, 3);  //z_i to stack
+            if(lua_isnumber(L, -1) != 1 || lua_isnumber(L, -2) != 1 || lua_isnumber(L, -3) != 1)
+                return luaL_error(L, "ERROR: invalid coordinates");
+                    
+            point[0+(3*i)] = lua_tonumber(L, -3);    //stack spot x to point1[0]
+            point[1+(3*i)] = lua_tonumber(L, -2);    //stack spot y to point1[1]
+            point[2+(3*i)] = lua_tonumber(L, -1);    //stack spot z to point1[2]
 
-                lua_rawgeti(L, -4, 4);   //checking size of array
-                luaL_argcheck(L, (lua_type(L, -1) != LUA_TNUMBER), 0, "ERROR: number of components");
-		}
+            lua_rawgeti(L, -4, 4);   //checking size of array
+            luaL_argcheck(L, (lua_type(L, -1) != LUA_TNUMBER), 0, "ERROR: number of components");
+        }
 
-		float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5,1};
+        float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5,1};
         float point1[3] = {point[0], point[1], point[2]};
         float point2[3] = {point[3], point[4], point[5]};
         float point3[3] = {point[6], point[7], point[8]};
@@ -45,8 +45,58 @@ static int AddMesh(lua_State *L){
         if(!NewTriangle(point1, point2, point3, uv1, uv2, uv3, "", ""))
             return luaL_error(L, "ERROR: unable to create triangle");
 
-		meshCount++;
-	}
+        meshCount++;
+    }
+    return 0;
+}*/
+
+static int AddMesh(lua_State *L){
+    luaL_checktype(L, 1, LUA_TTABLE);
+
+    if(lua_gettop(L) > 1)
+        return luaL_error(L, "ERROR: number of arguments");
+
+    int meshCount = 0;
+    int verticeCount = luaL_len(L,1);
+
+    if((verticeCount < 3) || ((verticeCount%3) != 0))
+        return luaL_error(L, "ERROR: invalid number of coordinates");
+
+    for(int i = 0; i < (verticeCount/3); i++){  //loop once for every mesh to be drawn
+        float point[9];
+        
+        for(int j = 0; j < 3; j++){   //1 loop for every 1 point (with x,y,z-values)
+
+            lua_rawgeti(L, 1, (j+1)+(3*i));   //add table to stack (1x3 values)
+            if(lua_istable(L, -1) != 1)
+                return luaL_error(L, "ERROR: invalid table");
+            
+            lua_rawgeti(L, -1, 1);  //x_i to stack
+            lua_rawgeti(L, -2, 2);  //y_i to stack
+            lua_rawgeti(L, -3, 3);  //z_i to stack
+            if(lua_isnumber(L, -1) != 1 || lua_isnumber(L, -2) != 1 || lua_isnumber(L, -3) != 1)
+                return luaL_error(L, "ERROR: invalid coordinates");
+                    
+            point[0+(3*j)] = lua_tonumber(L, -3);    //stack spot x to point1[0]
+            point[1+(3*j)] = lua_tonumber(L, -2);    //stack spot y to point1[1]
+            point[2+(3*j)] = lua_tonumber(L, -1);    //stack spot z to point1[2]
+
+            lua_pop(L, 3);  //new - remove the top 3 elements on the stack (solves segmentation fault)
+
+            lua_rawgeti(L, -1, 4);   //checking size of array
+            luaL_argcheck(L, (lua_type(L, -1) != LUA_TNUMBER), 0, "ERROR: number of components");
+        }
+
+        float uv1[2] = {0,0}; float uv2[2] = {1,0}; float uv3[2] = {0.5,1};
+        float point1[3] = {point[0], point[1], point[2]};
+        float point2[3] = {point[3], point[4], point[5]};
+        float point3[3] = {point[6], point[7], point[8]};
+
+        if(!NewTriangle(point1, point2, point3, uv1, uv2, uv3, "", ""))
+            return luaL_error(L, "ERROR: unable to create triangle");
+
+        meshCount++;
+    }
     return 0;
 }
 

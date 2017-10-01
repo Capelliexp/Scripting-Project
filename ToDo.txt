@@ -1,4 +1,4 @@
-( ) Calling getnodes causes the program to abort with memory corruption:
+(x) Calling getnodes causes the program to abort with memory corruption:
 		1. Att skapa en massa (fungerande) former är inget problem.
 		2. Att anropa Lua-kommandon felaktigt skapar inget minnesproblem.
 		3. Att först skapa former och sedan anropa felaktiga Lua-kommandon är inget problem.
@@ -19,6 +19,6 @@
 (x) addMesh() not updating the geometry
 		Troligtvis hittat felet...
 
-( ) ta bort alla lua_settop(L, 0)
+(x) ta bort alla lua_settop(L, 0)
 
-( ) ta bort alla cout's
+(x) ta bort alla cout's
